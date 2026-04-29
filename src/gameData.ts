@@ -801,7 +801,7 @@ export const shopItems: ShopItem[] = [
   { id: 'sword', name: '训练木剑', description: '打字伤害+20%', price: 80, icon: '🗡️', effect: { type: 'damage_boost', value: 0.2 }, purchased: false, consumable: false },
   { id: 'staff', name: '法师法杖', description: '打字伤害+40%', price: 150, icon: '🪄', effect: { type: 'damage_boost', value: 0.4 }, purchased: false, consumable: false },
   { id: 'crown', name: '勇者之冠', description: '打字伤害+60%', price: 250, icon: '👑', effect: { type: 'damage_boost', value: 0.6 }, purchased: false, consumable: false },
-  { id: 'hourglass', name: '时间沙漏', description: '每场战斗+5秒', price: 60, icon: '⏳', effect: { type: 'time_boost', value: 5 }, purchased: false, consumable: false },
+  { id: 'hourglass', name: '时间沙漏', description: '每场战斗+3秒，持续3场', price: 40, icon: '⏳', effect: { type: 'time_sand', value: 3 }, purchased: false, consumable: true },
   { id: 'ring', name: '连击戒指', description: 'Combo加成+30%', price: 100, icon: '💍', effect: { type: 'combo_boost', value: 0.3 }, purchased: false, consumable: false },
   { id: 'armor', name: '坚固铠甲', description: '受到的伤害-30%', price: 120, icon: '🛡️', effect: { type: 'defense_boost', value: 0.3 }, purchased: false, consumable: false },
   { id: 'hat', name: '冒险帽', description: '帅气外观，无属性加成', price: 30, icon: '🎩', effect: { type: 'cosmetic', value: 0 }, purchased: false, consumable: false },

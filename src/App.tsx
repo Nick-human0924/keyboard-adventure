@@ -16,6 +16,7 @@ interface Player {
   level: number; xp: number; hp: number; maxHp: number; coins: number;
   x: number; y: number; vy: number; onGround: boolean; facingRight: boolean;
   damageBoost: number; defenseBoost: number; timeBoost: number; comboBoost: number;
+  timeSandBattles: number;
 }
 
 interface LevelProgress {
@@ -122,7 +123,7 @@ const MAP_W = 3600; const GROUND_Y = 400; const GRAVITY = 0.6;
 const JUMP_F = -12; const PW = 50; const PH = 70;
 
 function initPlayer(): Player {
-  return { level: 1, xp: 0, hp: 100, maxHp: 100, coins: 0, x: 50, y: GROUND_Y - PH, vy: 0, onGround: true, facingRight: true, damageBoost: 0, defenseBoost: 0, timeBoost: 0, comboBoost: 0 };
+  return { level: 1, xp: 0, hp: 100, maxHp: 100, coins: 0, x: 50, y: GROUND_Y - PH, vy: 0, onGround: true, facingRight: true, damageBoost: 0, defenseBoost: 0, timeBoost: 0, comboBoost: 0, timeSandBattles: 0 };
 }
 
 function getSaveSlot(slotIndex: number): Partial<GameState> | null {
@@ -199,7 +200,7 @@ function loadFromSlot(slotIndex: number): GameState {
   };
   return {
     screen: 'WORLD_SELECT', prevScreen: 'TITLE',
-    player: { ...initPlayer(), ...saved.player },
+    player: { ...initPlayer(), ...saved.player, timeSandBattles: saved.player?.timeSandBattles ?? 0 },
     battle: null,
     mapEntities: mapLayout.map((e: MapEntity) => ({ ...e })),
     defeatedMonsters: saved.defeatedMonsters || [],
@@ -365,9 +366,11 @@ function reducer(s: GameState, a: Action): GameState {
       const c = getRandomContent(wave, [], s.currentStage);
       const isRepeat1 = s.currentLevelId ? s.completedLevels.includes(s.currentLevelId) : false;
       const timeP1 = isRepeat1 ? 0.8 : 1.0;
-      const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost) * timeP1);
+      const sandBonus = s.player.timeSandBattles > 0 ? 3 : 0;
+      const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost + sandBonus) * timeP1);
       const isNew = (c.type === 'word' || c.type === 'phrase') && !s.wordsSeen.includes(c.text);
-      return { ...s, screen: 'BATTLE', battle: { ...s.battle, targetText: c.text, timeLeft: tl, timeLimit: tl, playerInput: '', usedTexts: [c.text], currentContent: c, currentWaveIndex: 0, battleStatus: 'typing', isNewWord: isNew } };
+      const newSandBattles = s.player.timeSandBattles > 0 ? s.player.timeSandBattles - 1 : s.player.timeSandBattles;
+      return { ...s, screen: 'BATTLE', player: { ...s.player, timeSandBattles: newSandBattles }, battle: { ...s.battle, targetText: c.text, timeLeft: tl, timeLimit: tl, playerInput: '', usedTexts: [c.text], currentContent: c, currentWaveIndex: 0, battleStatus: 'typing', isNewWord: isNew } };
     }
     case 'TYPE_CHAR': {
       if (!s.battle || s.battle.battleStatus !== 'typing') return s;
@@ -441,7 +444,7 @@ function reducer(s: GameState, a: Action): GameState {
         const c = getRandomContent(wave, b.usedTexts, s.currentStage);
         const isRepeat2 = s.currentLevelId ? s.completedLevels.includes(s.currentLevelId) : false;
         const timeP2 = isRepeat2 ? 0.8 : 1.0;
-        const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost) * timeP2);
+        const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost + (s.player.timeSandBattles > 0 ? 3 : 0)) * timeP2);
         const isNew = (c.type === 'word' || c.type === 'phrase') && !s.wordsSeen.includes(c.text);
         return { ...s, screen: 'BATTLE', battle: { ...b, currentRound: nr, currentWaveIndex: waveIndex, targetText: c.text, playerInput: '', timeLeft: tl, timeLimit: tl, roundErrors: 0, usedTexts: [...b.usedTexts, c.text], currentContent: c, battleStatus: 'typing', showComboPopup: false, isNewWord: isNew } };
       }
@@ -452,7 +455,7 @@ function reducer(s: GameState, a: Action): GameState {
         const c = getRandomContent(wave, b.usedTexts, s.currentStage);
         const isRepeat3 = s.currentLevelId ? s.completedLevels.includes(s.currentLevelId) : false;
         const timeP3 = isRepeat3 ? 0.8 : 1.0;
-        const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost) * timeP3);
+        const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost + (s.player.timeSandBattles > 0 ? 3 : 0)) * timeP3);
         const isNew = (c.type === 'word' || c.type === 'phrase') && !s.wordsSeen.includes(c.text);
         return { ...s, screen: 'BATTLE', battle: { ...b, currentRound: nr, currentWaveIndex: waveIndex, targetText: c.text, playerInput: '', timeLeft: tl, timeLimit: tl, roundErrors: 0, usedTexts: [...b.usedTexts, c.text], currentContent: c, battleStatus: 'typing', shakeScreen: false, showComboPopup: false, defensePrompt: '', isNewWord: isNew } };
       }
@@ -487,17 +490,19 @@ function reducer(s: GameState, a: Action): GameState {
     }
     case 'BUY_ITEM': {
       const item = s.shopInventory.find(i => i.id === a.payload);
-      if (!item || item.purchased || s.player.coins < item.price) return s;
+      if (!item || (item.purchased && !item.consumable) || s.player.coins < item.price) return s;
       const ni = s.shopInventory.map(i => i.id === a.payload ? { ...i, purchased: !i.consumable } : i);
       let nhp = s.player.hp; let nmh = s.player.maxHp;
       let ndb = s.player.damageBoost; let ndfb = s.player.defenseBoost;
       let ntb = s.player.timeBoost; let ncb = s.player.comboBoost;
+      let nsb = s.player.timeSandBattles;
       if (item.effect.type === 'heal') nhp = Math.min(nmh, nhp + item.effect.value);
       if (item.effect.type === 'damage_boost') ndb = item.effect.value;
       if (item.effect.type === 'defense_boost') ndfb = item.effect.value;
       if (item.effect.type === 'time_boost') ntb = item.effect.value;
       if (item.effect.type === 'combo_boost') ncb = item.effect.value;
-      return { ...s, shopInventory: ni, player: { ...s.player, coins: s.player.coins - item.price, hp: nhp, maxHp: nmh, damageBoost: ndb, defenseBoost: ndfb, timeBoost: ntb, comboBoost: ncb } };
+      if (item.effect.type === 'time_sand') nsb += 3;
+      return { ...s, shopInventory: ni, player: { ...s.player, coins: s.player.coins - item.price, hp: nhp, maxHp: nmh, damageBoost: ndb, defenseBoost: ndfb, timeBoost: ntb, comboBoost: ncb, timeSandBattles: nsb } };
     }
     case 'OPEN_MISSIONS': return setScreen('MISSIONS');
     case 'CLOSE_MISSIONS': return setScreen('LEVEL_SELECT');
@@ -933,7 +938,7 @@ function ShopScreen({ state, dispatch }: { state: GameState; dispatch: React.Dis
           {state.shopInventory.map(item => (
             <div key={item.id} className={`flex items-center gap-3 p-3 rounded-xl border ${item.purchased && !item.consumable ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
               <span className="text-2xl">{item.icon}</span>
-              <div className="flex-1 min-w-0"><p className="font-bold text-gray-800 text-sm">{item.name}</p><p className="text-gray-500 text-xs">{item.description}</p></div>
+              <div className="flex-1 min-w-0"><p className="font-bold text-gray-800 text-sm">{item.name}</p><p className="text-gray-500 text-xs">{item.description}{item.id === 'hourglass' && state.player.timeSandBattles > 0 ? ` (剩余${state.player.timeSandBattles}场)` : ''}</p></div>
               {item.purchased && !item.consumable ? <span className="text-green-600 font-bold text-xs shrink-0">✓</span> : (
                 <button onClick={() => dispatch({ type: 'BUY_ITEM', payload: item.id })} disabled={state.player.coins < item.price}
                   className={`px-2 py-1 rounded-lg font-bold text-xs shrink-0 cursor-pointer transition-all ${state.player.coins >= item.price ? 'bg-yellow-400 text-yellow-900 hover:bg-yellow-300' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}>🪙 {item.price}</button>
