@@ -433,7 +433,7 @@ function reducer(s: GameState, a: Action): GameState {
           const levelId = s.currentLevelId;
           const newCompleted = levelId && !s.completedLevels.includes(levelId) ? [...s.completedLevels, levelId] : s.completedLevels;
           playVictorySound();
-          return { ...s, screen: 'RESULT', battle: { ...b, battleStatus: 'victory', showComboPopup: false, didLevelUp }, totalBattles: s.totalBattles + 1, battlesWon: s.battlesWon + 1, defeatedMonsters: [...s.defeatedMonsters, b.monster.id], player: { ...s.player, xp: newXp, coins: s.player.coins + cg, level: lvlInfo.level, maxHp: lvlInfo.maxHp, hp: didLevelUp ? lvlInfo.maxHp : Math.min(lvlInfo.maxHp, s.player.hp + 5) }, levelProgress: np, missions: nm, completedLevels: newCompleted };
+          return { ...s, screen: 'RESULT', battle: { ...b, battleStatus: 'victory', showComboPopup: false, didLevelUp }, totalBattles: s.totalBattles + 1, battlesWon: s.battlesWon + 1, defeatedMonsters: [...s.defeatedMonsters, b.monster.id], player: { ...s.player, xp: newXp, coins: s.player.coins + cg, level: lvlInfo.level, maxHp: lvlInfo.maxHp, hp: didLevelUp ? lvlInfo.maxHp : Math.min(lvlInfo.maxHp, b.playerHp + 5) }, levelProgress: np, missions: nm, completedLevels: newCompleted };
         }
         const nr = b.currentRound + 1;
         const { wave, waveIndex } = getWaveForRound(b.monster, nr);
