@@ -636,7 +636,7 @@ function TitleScreen({ state, onStart, dispatch }: { state: GameState; onStart: 
             <button onClick={() => { if (confirm('确定要登出吗？进度会自动保存。')) dispatch({ type: 'LOGOUT' }); }} className="text-white/60 hover:text-white text-xs font-bold ml-2 cursor-pointer transition-colors">登出</button>
           </div>
         )}
-        <img src="/hero.png" alt="Hero" className="w-36 h-auto mb-6 animate-breathe drop-shadow-2xl" />
+        <img src="hero.png" alt="Hero" className="w-36 h-auto mb-6 animate-breathe drop-shadow-2xl" />
         <h1 className="text-6xl md:text-7xl font-black text-white mb-3 text-center tracking-tight" style={{ textShadow: '3px 3px 0 #388E3C, 0 6px 20px rgba(0,0,0,0.3)' }}>键盘冒险岛</h1>
         <p className="text-xl md:text-2xl font-bold text-white/90 mb-10 tracking-[0.3em] uppercase" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.5)' }}>Typing Adventure</p>
         <button onClick={onStart} className="px-14 py-5 bg-gradient-to-b from-green-400 to-green-600 hover:from-green-300 hover:to-green-500 text-white text-2xl font-black rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 animate-pulse-glow cursor-pointer border-2 border-green-300/50">开始冒险</button>
@@ -821,7 +821,7 @@ function BattleScreen({ state, dispatch }: { state: GameState; dispatch: React.D
         <div className="flex flex-col items-center gap-1 w-1/3">
           <span className="text-xs font-bold text-white bg-black/30 px-2 py-0.5 rounded">Lv.{state.player.level}</span>
           <div className="w-32"><div className="hp-bar-container"><div className="hp-bar-fill bg-green-500" style={{ width: `${(battle.playerHp / state.player.maxHp) * 100}%` }} /></div></div>
-          <div className={`relative ${battle.battleStatus === 'player_attack' ? 'animate-hero-attack' : ''}`}><img src="/hero.png" alt="Hero" className="w-24 h-auto object-contain" style={{ animation: battle.battleStatus === 'typing' ? 'breathe 1.5s ease-in-out infinite' : 'none' }} />{battle.battleStatus === 'player_attack' && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-green-600 font-black animate-damage-float">-{battle.lastDamage}</div>}</div>
+          <div className={`relative ${battle.battleStatus === 'player_attack' ? 'animate-hero-attack' : ''}`}><img src="hero.png" alt="Hero" className="w-24 h-auto object-contain" style={{ animation: battle.battleStatus === 'typing' ? 'breathe 1.5s ease-in-out infinite' : 'none' }} />{battle.battleStatus === 'player_attack' && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-green-600 font-black animate-damage-float">-{battle.lastDamage}</div>}</div>
         </div>
         <div className="text-center"><span className="text-4xl font-black text-red-400/30">VS</span>{battle.showComboPopup && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-combo-pop"><span className="text-5xl">💥</span></div>}</div>
         <div className="flex flex-col items-center gap-1 w-1/3">

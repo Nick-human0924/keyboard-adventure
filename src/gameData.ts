@@ -554,7 +554,7 @@ export function getPlayerLevel(xp: number): { level: number; maxHp: number; next
 export const monsters: Monster[] = [
   // ===== World 1 - 字母草地: ONLY single letters (stage 0-1) =====
   {
-    id: 'slime', name: 'Letter Slime', nameCn: '字母史莱姆', image: '/slime.png',
+    id: 'slime', name: 'Letter Slime', nameCn: '字母史莱姆', image: 'slime.png',
     hp: 80, maxHp: 80, attackDamage: 16, isBoss: false, baseXp: 15, baseCoins: 5,
     description: '软乎乎的字母史莱姆，从基准键开始',
     waves: [
@@ -564,7 +564,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'bug', name: 'J Bug', nameCn: 'J小虫', image: '/bug.png',
+    id: 'bug', name: 'J Bug', nameCn: 'J小虫', image: 'bug.png',
     hp: 100, maxHp: 100, attackDamage: 20, isBoss: false, baseXp: 25, baseCoins: 8,
     description: '蠕动的J小虫，覆盖所有单字母',
     waves: [
@@ -574,7 +574,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'mushroom', name: 'Word Mushroom', nameCn: '单词蘑菇', image: '/mushroom.png',
+    id: 'mushroom', name: 'Word Mushroom', nameCn: '单词蘑菇', image: 'mushroom.png',
     hp: 120, maxHp: 120, attackDamage: 20, isBoss: false, baseXp: 35, baseCoins: 10,
     description: '蘑菇头上长满了字母',
     waves: [
@@ -584,7 +584,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'bat', name: 'Combo Bat', nameCn: '双键蝙蝠', image: '/bat.png',
+    id: 'bat', name: 'Combo Bat', nameCn: '双键蝙蝠', image: 'bat.png',
     hp: 140, maxHp: 140, attackDamage: 24, isBoss: false, baseXp: 45, baseCoins: 12,
     description: '精英双键蝙蝠，快速字母连击',
     waves: [
@@ -594,7 +594,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'boss', name: 'Chaos Tree King', nameCn: '乱码树王', image: '/boss.png',
+    id: 'boss', name: 'Chaos Tree King', nameCn: '乱码树王', image: 'boss.png',
     hp: 200, maxHp: 200, attackDamage: 30, isBoss: true, baseXp: 80, baseCoins: 30,
     description: 'BOSS！森林中的字母王者，全字母混合',
     waves: [
@@ -606,7 +606,7 @@ export const monsters: Monster[] = [
 
   // ===== World 2 - 组合森林: ONLY two-key combos (stage 1) =====
   {
-    id: 'stump', name: 'Combo Stump', nameCn: '组合树桩', image: '/stump.png',
+    id: 'stump', name: 'Combo Stump', nameCn: '组合树桩', image: 'stump.png',
     hp: 160, maxHp: 160, attackDamage: 16, isBoss: false, baseXp: 40, baseCoins: 12,
     description: '树桩上刻满了相邻键组合',
     waves: [
@@ -616,7 +616,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'vine', name: 'Typing Vine', nameCn: '打字藤蔓', image: '/mushroom.png',
+    id: 'vine', name: 'Typing Vine', nameCn: '打字藤蔓', image: 'mushroom.png',
     hp: 180, maxHp: 180, attackDamage: 18, isBoss: false, baseXp: 50, baseCoins: 15,
     description: '缠绕在树上的打字藤蔓，快速组合',
     waves: [
@@ -626,7 +626,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'moss', name: 'Key Moss', nameCn: '按键苔藓', image: '/bug.png',
+    id: 'moss', name: 'Key Moss', nameCn: '按键苔藓', image: 'bug.png',
     hp: 200, maxHp: 200, attackDamage: 20, isBoss: false, baseXp: 60, baseCoins: 18,
     description: '覆盖键盘的苔藓怪物，各种组合混合',
     waves: [
@@ -636,7 +636,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'forest_boss', name: 'Ancient Oak', nameCn: '远古橡树', image: '/forest_boss.png',
+    id: 'forest_boss', name: 'Ancient Oak', nameCn: '远古橡树', image: 'forest_boss.png',
     hp: 350, maxHp: 350, attackDamage: 30, isBoss: true, baseXp: 120, baseCoins: 55,
     description: 'BOSS！森林深处的远古守护者，全组合考验',
     waves: [
@@ -648,7 +648,7 @@ export const monsters: Monster[] = [
 
   // ===== World 3 - 短词小镇: ONLY 2-5 letter words (stage 2-3) =====
   {
-    id: 'book', name: 'Flying Book', nameCn: '飞行书怪', image: '/book.png',
+    id: 'book', name: 'Flying Book', nameCn: '飞行书怪', image: 'book.png',
     hp: 200, maxHp: 200, attackDamage: 28, isBoss: false, baseXp: 50, baseCoins: 15,
     description: '书页飞舞的魔法书怪，小单词挑战',
     waves: [
@@ -658,7 +658,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'town_boss', name: 'Grammar Dragon', nameCn: '语法巨龙', image: '/town_boss.png',
+    id: 'town_boss', name: 'Grammar Dragon', nameCn: '语法巨龙', image: 'town_boss.png',
     hp: 350, maxHp: 350, attackDamage: 40, isBoss: true, baseXp: 120, baseCoins: 55,
     description: 'BOSS！镇守短词小镇的语法巨龙',
     waves: [
@@ -670,7 +670,7 @@ export const monsters: Monster[] = [
 
   // ===== World 4 - 海洋世界: ONLY 7-15 letter long words (stage 4-5) =====
   {
-    id: 'jelly', name: 'Letter Jelly', nameCn: '字母水母', image: '/jelly.png',
+    id: 'jelly', name: 'Letter Jelly', nameCn: '字母水母', image: 'jelly.png',
     hp: 240, maxHp: 240, attackDamage: 32, isBoss: false, baseXp: 60, baseCoins: 18,
     description: '深海中漂浮的字母水母，长单词考验',
     waves: [
@@ -680,7 +680,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'ocean_boss', name: 'Kraken Type', nameCn: '打字海怪', image: '/ocean_boss.png',
+    id: 'ocean_boss', name: 'Kraken Type', nameCn: '打字海怪', image: 'ocean_boss.png',
     hp: 420, maxHp: 420, attackDamage: 44, isBoss: true, baseXp: 150, baseCoins: 70,
     description: 'BOSS！深海中的打字海怪，超长单词',
     waves: [
@@ -692,7 +692,7 @@ export const monsters: Monster[] = [
 
   // ===== World 5 - 太空世界: ONLY phrases/sentences (stage 6-7) =====
   {
-    id: 'robot', name: 'Type Bot', nameCn: '打字机器人', image: '/robot.png',
+    id: 'robot', name: 'Type Bot', nameCn: '打字机器人', image: 'robot.png',
     hp: 300, maxHp: 300, attackDamage: 36, isBoss: false, baseXp: 75, baseCoins: 30,
     description: '来自太空的打字机器人，句子挑战',
     waves: [
@@ -702,7 +702,7 @@ export const monsters: Monster[] = [
     ],
   },
   {
-    id: 'space_boss', name: 'Galactic Overlord', nameCn: '银河霸主', image: '/space_boss.png',
+    id: 'space_boss', name: 'Galactic Overlord', nameCn: '银河霸主', image: 'space_boss.png',
     hp: 500, maxHp: 500, attackDamage: 50, isBoss: true, baseXp: 200, baseCoins: 100,
     description: 'BOSS！统治银河的终极打字霸主',
     waves: [
