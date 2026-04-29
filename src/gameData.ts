@@ -906,13 +906,13 @@ export function calculateDamage(
 export function calculateMonsterDamage(attackDamage: number, defenseBoost: number): number {
   // Defense is now flat reduction (max 3), not percentage
   const reduction = Math.min(3, Math.floor(defenseBoost * 5));
-  return Math.max(1, attackDamage - reduction);
+  return Math.max(0, attackDamage - reduction);
 }
 
 export function getTimeLimit(text: string, type: string, waveMultiplier: number): number {
   // Tighter base times to increase difficulty
-  const baseTimes: Record<string, number> = { letter: 4, combo: 4, word: 6, phrase: 9 };
-  const base = baseTimes[type] || 6;
+  const baseTimes: Record<string, number> = { letter: 3, combo: 3, word: 5, phrase: 8 };
+  const base = baseTimes[type] || 5;
   const lengthBonus = Math.max(0, text.length - 3) * 1.0;
   return Math.round((base + lengthBonus) * waveMultiplier);
 }

@@ -640,7 +640,7 @@ function TitleScreen({ state, onStart, dispatch }: { state: GameState; onStart: 
         <h1 className="text-6xl md:text-7xl font-black text-white mb-3 text-center tracking-tight" style={{ textShadow: '3px 3px 0 #388E3C, 0 6px 20px rgba(0,0,0,0.3)' }}>键盘冒险岛</h1>
         <p className="text-xl md:text-2xl font-bold text-white/90 mb-10 tracking-[0.3em] uppercase" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.5)' }}>Typing Adventure</p>
         <button onClick={onStart} className="px-14 py-5 bg-gradient-to-b from-green-400 to-green-600 hover:from-green-300 hover:to-green-500 text-white text-2xl font-black rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 animate-pulse-glow cursor-pointer border-2 border-green-300/50">开始冒险</button>
-        <p className="mt-6 text-white/60 text-sm font-medium" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>v0.10 | 本地进度自动保存</p>
+        <p className="mt-6 text-white/60 text-sm font-medium" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>v0.11 | 本地进度自动保存</p>
       </div>
     </div>
   );
