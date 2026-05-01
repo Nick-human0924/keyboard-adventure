@@ -590,7 +590,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 1.0, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.7, count: 6 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.45, count: 5 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.5, count: 5 },
     ],
   },
   {
@@ -600,7 +600,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 1.0, count: 6 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.65, count: 7 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.4, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.5, count: 6 },
     ],
   },
 
@@ -612,7 +612,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 1.0, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.7, count: 6 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.45, count: 5 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.5, count: 5 },
     ],
   },
   {
@@ -622,7 +622,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.9, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.6, count: 6 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.4, count: 5 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.5, count: 5 },
     ],
   },
   {
@@ -632,7 +632,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.85, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.55, count: 6 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.35, count: 5 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.5, count: 5 },
     ],
   },
   {
@@ -642,7 +642,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.9, count: 6 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.6, count: 7 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.35, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.5, count: 6 },
     ],
   },
 
@@ -654,7 +654,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 2, timeMultiplier: 0.9, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.6, count: 6 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.4, count: 5 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.5, count: 5 },
     ],
   },
   {
@@ -664,7 +664,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.8, count: 6 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.5, count: 7 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.3, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.5, count: 6 },
     ],
   },
 
@@ -676,7 +676,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 4, timeMultiplier: 0.7, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.5, count: 6 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.35, count: 5 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.5, count: 5 },
     ],
   },
   {
@@ -686,7 +686,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.6, count: 6 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.4, count: 7 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.25, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.5, count: 6 },
     ],
   },
 
@@ -698,7 +698,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.6, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.4, count: 6 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.25, count: 5 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.5, count: 5 },
     ],
   },
   {
@@ -708,7 +708,7 @@ export const monsters: Monster[] = [
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.5, count: 6 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.35, count: 7 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.2, count: 7 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.5, count: 7 },
     ],
   },
 ];
@@ -910,8 +910,8 @@ export function calculateMonsterDamage(attackDamage: number, defenseBoost: numbe
 }
 
 export function getTimeLimit(text: string, type: string, waveMultiplier: number): number {
-  // Tighter base times to increase difficulty
-  const baseTimes: Record<string, number> = { letter: 3, combo: 3, word: 5, phrase: 8 };
+  // Base times increased for 6-year-old beginners (needs time to locate keys)
+  const baseTimes: Record<string, number> = { letter: 4, combo: 4, word: 6, phrase: 10 };
   const base = baseTimes[type] || 5;
   const lengthBonus = Math.max(0, text.length - 3) * 1.0;
   return Math.round((base + lengthBonus) * waveMultiplier);
