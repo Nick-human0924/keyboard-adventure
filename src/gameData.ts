@@ -595,7 +595,7 @@ export const monsters: Monster[] = [
   },
   {
     id: 'boss', name: 'Chaos Tree King', nameCn: '乱码树王', image: 'boss.png',
-    hp: 200, maxHp: 200, attackDamage: 30, isBoss: true, baseXp: 80, baseCoins: 30,
+    hp: 200, maxHp: 200, attackDamage: 30, isBoss: true, baseXp: 80, baseCoins: 45,
     description: 'BOSS！森林中的字母王者，全字母混合',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 1, combo: 0, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 1.0, count: 6 },
@@ -607,7 +607,7 @@ export const monsters: Monster[] = [
   // ===== World 2 - 组合森林: ONLY two-key combos (stage 1) =====
   {
     id: 'stump', name: 'Combo Stump', nameCn: '组合树桩', image: 'stump.png',
-    hp: 160, maxHp: 160, attackDamage: 16, isBoss: false, baseXp: 40, baseCoins: 12,
+    hp: 160, maxHp: 160, attackDamage: 16, isBoss: false, baseXp: 40, baseCoins: 18,
     description: '树桩上刻满了相邻键组合',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 1.0, count: 5 },
@@ -617,7 +617,7 @@ export const monsters: Monster[] = [
   },
   {
     id: 'vine', name: 'Typing Vine', nameCn: '打字藤蔓', image: 'mushroom.png',
-    hp: 180, maxHp: 180, attackDamage: 18, isBoss: false, baseXp: 50, baseCoins: 15,
+    hp: 180, maxHp: 180, attackDamage: 18, isBoss: false, baseXp: 50, baseCoins: 23,
     description: '缠绕在树上的打字藤蔓，快速组合',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.9, count: 5 },
@@ -627,7 +627,7 @@ export const monsters: Monster[] = [
   },
   {
     id: 'moss', name: 'Key Moss', nameCn: '按键苔藓', image: 'bug.png',
-    hp: 200, maxHp: 200, attackDamage: 20, isBoss: false, baseXp: 60, baseCoins: 18,
+    hp: 200, maxHp: 200, attackDamage: 20, isBoss: false, baseXp: 60, baseCoins: 27,
     description: '覆盖键盘的苔藓怪物，各种组合混合',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.85, count: 5 },
@@ -637,7 +637,7 @@ export const monsters: Monster[] = [
   },
   {
     id: 'forest_boss', name: 'Ancient Oak', nameCn: '远古橡树', image: 'forest_boss.png',
-    hp: 350, maxHp: 350, attackDamage: 30, isBoss: true, baseXp: 120, baseCoins: 55,
+    hp: 350, maxHp: 350, attackDamage: 30, isBoss: true, baseXp: 120, baseCoins: 83,
     description: 'BOSS！森林深处的远古守护者，全组合考验',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.9, count: 6 },
@@ -649,7 +649,7 @@ export const monsters: Monster[] = [
   // ===== World 3 - 短词小镇: ONLY 2-5 letter words (stage 2-3) =====
   {
     id: 'book', name: 'Flying Book', nameCn: '飞行书怪', image: 'book.png',
-    hp: 200, maxHp: 200, attackDamage: 28, isBoss: false, baseXp: 50, baseCoins: 15,
+    hp: 200, maxHp: 200, attackDamage: 28, isBoss: false, baseXp: 50, baseCoins: 23,
     description: '书页飞舞的魔法书怪，小单词挑战',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 2, timeMultiplier: 0.9, count: 5 },
@@ -659,7 +659,7 @@ export const monsters: Monster[] = [
   },
   {
     id: 'town_boss', name: 'Grammar Dragon', nameCn: '语法巨龙', image: 'town_boss.png',
-    hp: 350, maxHp: 350, attackDamage: 40, isBoss: true, baseXp: 120, baseCoins: 55,
+    hp: 350, maxHp: 350, attackDamage: 40, isBoss: true, baseXp: 120, baseCoins: 83,
     description: 'BOSS！镇守短词小镇的语法巨龙',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.8, count: 6 },
@@ -671,7 +671,7 @@ export const monsters: Monster[] = [
   // ===== World 4 - 海洋世界: ONLY 7-15 letter long words (stage 4-5) =====
   {
     id: 'jelly', name: 'Letter Jelly', nameCn: '字母水母', image: 'jelly.png',
-    hp: 240, maxHp: 240, attackDamage: 32, isBoss: false, baseXp: 60, baseCoins: 18,
+    hp: 240, maxHp: 240, attackDamage: 32, isBoss: false, baseXp: 60, baseCoins: 27,
     description: '深海中漂浮的字母水母，长单词考验',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 4, timeMultiplier: 0.7, count: 5 },
@@ -681,7 +681,7 @@ export const monsters: Monster[] = [
   },
   {
     id: 'ocean_boss', name: 'Kraken Type', nameCn: '打字海怪', image: 'ocean_boss.png',
-    hp: 420, maxHp: 420, attackDamage: 44, isBoss: true, baseXp: 150, baseCoins: 70,
+    hp: 420, maxHp: 420, attackDamage: 44, isBoss: true, baseXp: 150, baseCoins: 105,
     description: 'BOSS！深海中的打字海怪，超长单词',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.6, count: 6 },
@@ -693,7 +693,7 @@ export const monsters: Monster[] = [
   // ===== World 5 - 太空世界: ONLY phrases/sentences (stage 6-7) =====
   {
     id: 'robot', name: 'Type Bot', nameCn: '打字机器人', image: 'robot.png',
-    hp: 300, maxHp: 300, attackDamage: 36, isBoss: false, baseXp: 75, baseCoins: 30,
+    hp: 300, maxHp: 300, attackDamage: 36, isBoss: false, baseXp: 75, baseCoins: 45,
     description: '来自太空的打字机器人，句子挑战',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.6, count: 5 },
@@ -703,7 +703,7 @@ export const monsters: Monster[] = [
   },
   {
     id: 'space_boss', name: 'Galactic Overlord', nameCn: '银河霸主', image: 'space_boss.png',
-    hp: 500, maxHp: 500, attackDamage: 50, isBoss: true, baseXp: 200, baseCoins: 100,
+    hp: 500, maxHp: 500, attackDamage: 50, isBoss: true, baseXp: 200, baseCoins: 150,
     description: 'BOSS！统治银河的终极打字霸主',
     waves: [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.5, count: 6 },
@@ -911,7 +911,7 @@ export function calculateMonsterDamage(attackDamage: number, defenseBoost: numbe
 
 export function getTimeLimit(text: string, type: string, waveMultiplier: number): number {
   // Base times increased for 6-year-old beginners (needs time to locate keys)
-  const baseTimes: Record<string, number> = { letter: 4, combo: 4, word: 6, phrase: 10 };
+  const baseTimes: Record<string, number> = { letter: 5, combo: 5, word: 7, phrase: 11 };
   const base = baseTimes[type] || 5;
   const lengthBonus = Math.max(0, text.length - 3) * 1.0;
   return Math.round((base + lengthBonus) * waveMultiplier);
@@ -981,3 +981,4 @@ export function getFreeTimeLimit(content: ContentItem): number {
   const lengthBonus = Math.max(0, content.text.length - 3) * 1.2;
   return base + lengthBonus;
 }
+

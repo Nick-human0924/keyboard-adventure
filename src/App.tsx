@@ -826,7 +826,11 @@ function BattleScreen({ state, dispatch }: { state: GameState; dispatch: React.D
         <div className="flex flex-col items-center gap-1 w-1/3">
           <span className="text-xs font-bold text-white bg-black/30 px-2 py-0.5 rounded">Lv.{state.player.level}</span>
           <div className="w-32"><div className="hp-bar-container"><div className="hp-bar-fill bg-green-500" style={{ width: `${(battle.playerHp / state.player.maxHp) * 100}%` }} /></div></div>
-          <div className={`relative ${battle.battleStatus === 'player_attack' ? 'animate-hero-attack' : ''}`}><img src="hero.png" alt="Hero" className="w-24 h-auto object-contain" style={{ animation: battle.battleStatus === 'typing' ? 'breathe 1.5s ease-in-out infinite' : 'none' }} />{battle.battleStatus === 'player_attack' && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-green-600 font-black animate-damage-float">-{battle.lastDamage}</div>}</div>
+          <div className={`relative ${battle.battleStatus === 'player_attack' ? 'animate-hero-attack' : ''}`}>
+            <img src="hero.png" alt="Hero" className="w-24 h-auto object-contain" style={{ animation: battle.battleStatus === 'typing' ? 'breathe 1.5s ease-in-out infinite' : 'none' }} />
+            {battle.battleStatus === 'player_attack' && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-green-600 font-black animate-damage-float">-{battle.lastDamage}</div>}
+            {(battle.battleStatus === 'monster_attack' || battle.battleStatus === 'shield_phase') && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-600 font-black animate-damage-float">-{battle.lastDamage}</div>}
+          </div>
         </div>
         <div className="text-center"><span className="text-4xl font-black text-red-400/30">VS</span>{battle.showComboPopup && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-combo-pop"><span className="text-5xl">💥</span></div>}</div>
         <div className="flex flex-col items-center gap-1 w-1/3">
@@ -836,7 +840,7 @@ function BattleScreen({ state, dispatch }: { state: GameState; dispatch: React.D
           <div className={`relative ${battle.battleStatus === 'monster_attack' ? 'animate-monster-attack' : ''} ${battle.battleStatus === 'player_attack' ? 'animate-flash-red' : ''}`}>
             <img src={battle.monster.image} alt={battle.monster.nameCn} className={`object-contain ${battle.monster.isBoss ? 'w-28 h-28 drop-shadow-[0_0_15px_rgba(156,39,176,0.6)]' : 'w-24 h-24'}`} style={{ animation: battle.battleStatus === 'typing' ? `float ${battle.monster.isBoss ? '1.5s' : '2s'} ease-in-out infinite` : 'none' }} />
             {battle.monster.isBoss && <div className="absolute -inset-2 border-2 border-purple-400/30 rounded-full animate-pulse pointer-events-none" />}
-            {(battle.battleStatus === 'monster_attack' || battle.battleStatus === 'shield_phase') && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-600 font-black animate-damage-float">-{battle.lastDamage}</div>}
+            {/* damage number moved to hero side */}
           </div>
         </div>
       </div>
