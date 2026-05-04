@@ -486,7 +486,7 @@ function reducer(s: GameState, a: Action): GameState {
       };
       const updated = [...s.freeLeaderboard, newRecord].sort((a, b) => b.score - a.score).slice(0, 50);
       localStorage.setItem('typingLeaderboard', JSON.stringify(updated));
-      return { ...s, freeLeaderboard: updated };
+      return { ...s, player: { ...s.player, coins: s.player.coins + score }, freeLeaderboard: updated };
     }
     case 'BUY_ITEM': {
       const item = s.shopInventory.find(i => i.id === a.payload);
