@@ -1,11 +1,9 @@
 name: Apply gameplay fixes and deploy
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/apply-game-fixes.yml'
   workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
 
 permissions:
   contents: write
@@ -37,13 +35,16 @@ jobs:
           app_path = Path('src/App.tsx')
           text = app_path.read_text(encoding='utf-8')
 
-          if '    rewardClaimed: boolean;' not in text:
-              text = text.replace(
-                  '    isRunning: boolean;\n    rewards:',
-                  '    isRunning: boolean;\n    rewardClaimed: boolean;\n    recordSaved: boolean;\n    rewards:'
-              )
+          def replace_once(src, old, new):
+              return src if old not in src else src.replace(old, new, 1)
 
-          helper = '''function settleFreeModeRewards(state: GameState, freeMode: NonNullable<GameState['freeMode']>, timeLeft: number): GameState {
+          text = replace_once(text, """    isRunning: boolean;
+    rewards:""", """    isRunning: boolean;
+    rewardClaimed: boolean;
+    recordSaved: boolean;
+    rewards:""")
+
+          helper = """function settleFreeModeRewards(state: GameState, freeMode: NonNullable<GameState['freeMode']>, timeLeft: number): GameState {
   if (freeMode.rewardClaimed) {
     return { ...state, screen: 'FREE_RESULT', freeMode: { ...freeMode, timeLeft, isRunning: false } };
   }
@@ -68,21 +69,21 @@ jobs:
     freeMode: { ...freeMode, timeLeft, isRunning: false, rewardClaimed: true },
   };
 }
-'''
+"""
           if 'function settleFreeModeRewards(' not in text:
-              text = text.replace('\n// ============ Reducer ============\n', '\n' + helper + '\n// ============ Reducer ============\n')
+              text = replace_once(text, """
+// ============ Reducer ============
+""", "\n" + helper + "\n// ============ Reducer ============\n")
 
-          if 'rewardClaimed: false' not in text:
-              text = text.replace(
-                  'isRunning: true, rewards: { coins: getFreeContentReward(difficulty, true), xp: getFreeContentReward(difficulty, true) }',
-                  'isRunning: true, rewardClaimed: false, recordSaved: false, rewards: { coins: getFreeContentReward(difficulty, true), xp: getFreeContentReward(difficulty, true) }'
-              )
-
-          text = text.replace(
+          text = replace_once(text,
+              "isRunning: true, rewards: { coins: getFreeContentReward(difficulty, true), xp: getFreeContentReward(difficulty, true) }",
+              "isRunning: true, rewardClaimed: false, recordSaved: false, rewards: { coins: getFreeContentReward(difficulty, true), xp: getFreeContentReward(difficulty, true) }"
+          )
+          text = replace_once(text,
               "if (nt <= 0) return { ...s, screen: 'FREE_RESULT', freeMode: { ...s.freeMode, timeLeft: 0, isRunning: false } };",
               "if (nt <= 0) return settleFreeModeRewards(s, s.freeMode, 0);"
           )
-          text = text.replace(
+          text = replace_once(text,
               "case 'END_FREE_PLAY': return { ...s, screen: 'FREE_RESULT', freeMode: s.freeMode ? { ...s.freeMode, isRunning: false } : null };",
               "case 'END_FREE_PLAY': return s.freeMode ? settleFreeModeRewards(s, s.freeMode, s.freeMode.timeLeft) : s;"
           )
@@ -114,51 +115,40 @@ jobs:
 """
                   text = text[:save_start] + new_save + text[save_end:]
 
-          text = text.replace(
-              "if (b.battleStatus === 'shield_phase') {\n        const nt = b.timeLeft - 0.1;\n        if (nt <= 0) {\n          const md = calculateMonsterDamage(b.monster.attackDamage, s.player.defenseBoost);\n          const nph = Math.max(0, b.playerHp - md);\n          return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, battleStatus: 'monster_attack', lastDamage: md, shakeScreen: true, defensePrompt: '' } };\n        }",
-              "if (b.battleStatus === 'shield_phase') {\n        const nt = b.timeLeft - 0.1;\n        if (nt <= 0) {\n          const md = calculateMonsterDamage(b.monster.attackDamage, s.player.defenseBoost);\n          const nph = Math.max(0, b.playerHp - md);\n          return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, combo: 0, totalErrors: b.totalErrors + b.roundErrors, roundResults: [...b.roundResults, { correct: false, timeLeft: 0, timeLimit: b.timeLimit, errors: b.roundErrors, text: b.targetText }], battleStatus: 'monster_attack', lastDamage: md, shakeScreen: true, defensePrompt: '' }, totalInputs: s.totalInputs + b.targetText.length, totalTimeouts: s.totalTimeouts + 1 };\n        }"
+          text = replace_once(text,
+              "return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, battleStatus: 'monster_attack', lastDamage: md, shakeScreen: true, defensePrompt: '' } };",
+              "return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, combo: 0, totalErrors: b.totalErrors + b.roundErrors, roundResults: [...b.roundResults, { correct: false, timeLeft: 0, timeLimit: b.timeLimit, errors: b.roundErrors, text: b.targetText }], battleStatus: 'monster_attack', lastDamage: md, shakeScreen: true, defensePrompt: '' }, totalInputs: s.totalInputs + b.targetText.length, totalTimeouts: s.totalTimeouts + 1 };"
           )
-          if "const canUseShield = b.monster.isBoss && b.currentRound % 4 === 0;" not in text:
-              text = text.replace(
-                  "if (b.currentRound > 2 && b.combo >= 2) {",
-                  "const canUseShield = b.monster.isBoss && b.currentRound % 4 === 0;\n        if (canUseShield) {"
-              )
-          text = text.replace(
+          text = replace_once(text,
+              "if (b.currentRound > 2 && b.combo >= 2) {",
+              "const canUseShield = b.monster.isBoss && b.currentRound % 4 === 0;\n        if (canUseShield) {"
+          )
+          text = replace_once(text,
               "return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, battleStatus: 'monster_attack', lastDamage: rd, shakeScreen: true, defensePrompt: '' } };",
               "return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, combo: 0, totalErrors: b.totalErrors + b.roundErrors, roundResults: [...b.roundResults, { correct: false, timeLeft: 0, timeLimit: b.timeLimit, errors: b.roundErrors, text: b.targetText }], battleStatus: 'monster_attack', lastDamage: rd, shakeScreen: true, defensePrompt: '' }, totalInputs: s.totalInputs + b.targetText.length, totalTimeouts: s.totalTimeouts + 1 };"
           )
-          text = text.replace(
-              "if (b.battleStatus === 'monster_attack' || b.battleStatus === 'shield_phase') {",
-              "if (b.battleStatus === 'monster_attack') {"
-          )
-          text = text.replace(
-              "battle.battleStatus === 'player_attack' || battle.battleStatus === 'monster_attack' || battle.battleStatus === 'shield_phase'",
-              "battle.battleStatus === 'player_attack' || battle.battleStatus === 'monster_attack'"
-          )
-          text = text.replace(
+          text = text.replace("if (b.battleStatus === 'monster_attack' || b.battleStatus === 'shield_phase') {", "if (b.battleStatus === 'monster_attack') {")
+          text = text.replace("battle.battleStatus === 'player_attack' || battle.battleStatus === 'monster_attack' || battle.battleStatus === 'shield_phase'", "battle.battleStatus === 'player_attack' || battle.battleStatus === 'monster_attack'")
+          text = replace_once(text,
               "useEffect(() => { if (battle.battleStatus === 'typing') { const iv = setInterval(() => dispatch({ type: 'TICK_TIMER' }), 100); return () => clearInterval(iv); } }, [battle.battleStatus, dispatch]);",
               "useEffect(() => { if (battle.battleStatus === 'typing' || battle.battleStatus === 'shield_phase') { const iv = setInterval(() => dispatch({ type: 'TICK_TIMER' }), 100); return () => clearInterval(iv); } }, [battle.battleStatus, dispatch]);"
           )
 
-          if 'const totalXp = fm.correctCount * fm.rewards.xp;' not in text:
-              text = text.replace(
-                  "const totalReward = fm.correctCount * fm.rewards.coins;\n  const diffLabel",
-                  "const totalReward = fm.correctCount * fm.rewards.coins;\n  const totalXp = fm.correctCount * fm.rewards.xp;\n  const diffLabel"
-              )
-          text = text.replace(
-              '''        <div className="flex justify-center gap-4 mb-6">
+          text = replace_once(text,
+              "const totalReward = fm.correctCount * fm.rewards.coins;\n  const diffLabel",
+              "const totalReward = fm.correctCount * fm.rewards.coins;\n  const totalXp = fm.correctCount * fm.rewards.xp;\n  const diffLabel"
+          )
+          text = replace_once(text, """        <div className="flex justify-center gap-4 mb-6">
           <div className="flex items-center gap-2 bg-yellow-50 rounded-xl px-5 py-3 border border-yellow-200"><span className="text-2xl">🪙</span><span className="font-black text-yellow-700 text-lg">+{totalReward}</span></div>
         </div>
         <div className="flex gap-2 mb-2">
-          <button onClick={() => dispatch({ type: 'SAVE_FREE_RECORD' })} className="flex-1 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-400 transition-all cursor-pointer text-sm">💾 保存记录</button>''',
-              '''        <div className="flex justify-center gap-3 mb-2">
+          <button onClick={() => dispatch({ type: 'SAVE_FREE_RECORD' })} className="flex-1 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-400 transition-all cursor-pointer text-sm">💾 保存记录</button>""", """        <div className="flex justify-center gap-3 mb-2">
           <div className="flex items-center gap-2 bg-yellow-50 rounded-xl px-5 py-3 border border-yellow-200"><span className="text-2xl">🪙</span><span className="font-black text-yellow-700 text-lg">+{totalReward}</span></div>
           <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-5 py-3 border border-blue-200"><span className="text-2xl">✨</span><span className="font-black text-blue-700 text-lg">+{totalXp}</span></div>
         </div>
         <p className="text-center text-xs text-gray-400 mb-5">{fm.rewardClaimed ? '奖励已到账' : '奖励结算中'}</p>
         <div className="flex gap-2 mb-2">
-          <button onClick={() => dispatch({ type: 'SAVE_FREE_RECORD' })} disabled={fm.recordSaved} className={`flex-1 py-2 text-white font-bold rounded-lg transition-all text-sm ${fm.recordSaved ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-400 cursor-pointer'}`}>{fm.recordSaved ? '已保存' : '💾 保存记录'}</button>'''
-          )
+          <button onClick={() => dispatch({ type: 'SAVE_FREE_RECORD' })} disabled={fm.recordSaved} className={`flex-1 py-2 text-white font-bold rounded-lg transition-all text-sm ${fm.recordSaved ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-400 cursor-pointer'}`}>{fm.recordSaved ? '已保存' : '💾 保存记录'}</button>""")
 
           required = [
               'rewardClaimed: boolean;',
@@ -186,6 +176,18 @@ jobs:
               lock_path.write_text(json.dumps(lock, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
           PY
 
+      - name: Commit applied fixes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/App.tsx package-lock.json
+            git commit -m "fix: improve gameplay rewards and shield flow"
+            git push
+          else
+            echo "No gameplay fixes to commit."
+          fi
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -209,15 +211,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Commit applied fixes
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add src/App.tsx package-lock.json
-            git commit -m "fix: improve gameplay rewards and shield flow"
-            git push
-          else
-            echo "No gameplay fixes to commit."
-          fi
