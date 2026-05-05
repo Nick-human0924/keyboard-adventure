@@ -1,0 +1,103 @@
+name: Apply visual variety update
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/apply-visual-variety-update.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Patch visuals and level variety
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+
+          function replaceOnce(file, from, to) {
+            let text = fs.readFileSync(file, 'utf8');
+            if (!text.includes(from)) throw new Error(`Pattern not found in ${file}: ${from.slice(0, 120)}`);
+            text = text.replace(from, to);
+            fs.writeFileSync(file, text);
+          }
+
+          function write(file, content) { fs.writeFileSync(file, content.trimStart()); }
+
+          write('public/hero_avatar.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 200" role="img" aria-label="Keyboard hero">
+            <defs><linearGradient id="cape" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#34d399"/><stop offset="1" stop-color="#15803d"/></linearGradient><linearGradient id="armor" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/></linearGradient></defs>
+            <ellipse cx="80" cy="184" rx="46" ry="9" fill="#000" opacity=".18"/><path d="M42 86c-16 28-17 62-10 89 15-7 30-14 48-14s33 7 48 14c7-27 6-61-10-89z" fill="url(#cape)" stroke="#14532d" stroke-width="4"/><rect x="43" y="70" width="74" height="70" rx="18" fill="url(#armor)" stroke="#334155" stroke-width="4"/><path d="M57 91h46v32H57z" fill="#1e293b" opacity=".18"/><path d="M60 82h40l-20 28z" fill="#fff" opacity=".8"/><circle cx="80" cy="55" r="36" fill="#ffd7a8" stroke="#7c2d12" stroke-width="4"/><path d="M48 50c6-26 25-36 52-25 12 5 16 15 14 28-17-12-36-16-66-3z" fill="#7c2d12"/><circle cx="66" cy="60" r="6" fill="#111827"/><circle cx="94" cy="60" r="6" fill="#111827"/><path d="M68 77c8 7 16 7 24 0" fill="none" stroke="#7c2d12" stroke-width="4" stroke-linecap="round"/><path d="M45 43h70l-8-22H53z" fill="#cbd5e1" stroke="#334155" stroke-width="4" stroke-linejoin="round"/><rect x="50" y="35" width="60" height="15" rx="4" fill="#e2e8f0"/><path d="M56 36v14M72 35v15M88 35v15M104 36v14" stroke="#64748b" stroke-width="4"/><rect x="57" y="124" width="46" height="18" rx="5" fill="#0f172a"/><rect x="62" y="128" width="8" height="7" rx="2" fill="#22c55e"/><rect x="76" y="128" width="8" height="7" rx="2" fill="#facc15"/><rect x="90" y="128" width="8" height="7" rx="2" fill="#60a5fa"/><path d="M48 138l-12 32M112 138l12 32" stroke="#334155" stroke-width="8" stroke-linecap="round"/><path d="M62 141l-8 35M98 141l8 35" stroke="#475569" stroke-width="10" stroke-linecap="round"/>
+          </svg>`);
+          write('public/monster_scroll.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="142" rx="48" ry="8" fill="#000" opacity=".18"/><path d="M34 38c10-18 36-18 46 0 10-18 36-18 46 0v72c-10-14-36-14-46 0-10-14-36-14-46 0z" fill="#fef3c7" stroke="#92400e" stroke-width="5"/><path d="M50 55h60M50 73h58M50 91h48" stroke="#b45309" stroke-width="5" stroke-linecap="round"/><circle cx="61" cy="118" r="9" fill="#111827"/><circle cx="99" cy="118" r="9" fill="#111827"/><path d="M68 132c8 6 16 6 24 0" stroke="#92400e" stroke-width="5" fill="none" stroke-linecap="round"/><text x="80" y="30" text-anchor="middle" font-family="Arial" font-size="20" font-weight="900" fill="#2563eb">ABC</text></svg>`);
+          write('public/monster_pencil.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="142" rx="45" ry="8" fill="#000" opacity=".18"/><path d="M48 26l66 66-34 34-66-66z" fill="#facc15" stroke="#854d0e" stroke-width="5"/><path d="M100 78l14 14-18 18-14-14z" fill="#f97316"/><path d="M36 14l12 12-34 34-12-12z" fill="#fef3c7" stroke="#854d0e" stroke-width="5"/><path d="M2 48l12 12-14 6z" fill="#1f2937"/><circle cx="65" cy="74" r="7" fill="#111827"/><circle cx="85" cy="94" r="7" fill="#111827"/><path d="M58 98c8 8 18 8 26 0" stroke="#7c2d12" stroke-width="5" fill="none" stroke-linecap="round"/><text x="112" y="42" font-family="Arial" font-size="26" font-weight="900" fill="#2563eb">Q</text></svg>`);
+          write('public/monster_ink.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="143" rx="48" ry="8" fill="#000" opacity=".18"/><path d="M80 20c32 0 48 20 48 52 0 45-22 64-48 64S32 117 32 72c0-32 16-52 48-52z" fill="#312e81" stroke="#111827" stroke-width="5"/><path d="M42 95c-18 5-22 22-11 34M118 95c18 5 22 22 11 34" fill="none" stroke="#312e81" stroke-width="13" stroke-linecap="round"/><circle cx="64" cy="68" r="10" fill="#fff"/><circle cx="96" cy="68" r="10" fill="#fff"/><circle cx="67" cy="70" r="5" fill="#111827"/><circle cx="93" cy="70" r="5" fill="#111827"/><path d="M65 94c10 8 20 8 30 0" stroke="#f9a8d4" stroke-width="6" fill="none" stroke-linecap="round"/><text x="80" y="122" text-anchor="middle" font-family="Arial" font-size="28" font-weight="900" fill="#a5b4fc">INK</text></svg>`);
+          write('public/monster_shell.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="143" rx="46" ry="8" fill="#000" opacity=".18"/><path d="M28 92c4-40 26-68 52-68s48 28 52 68c-14 25-90 25-104 0z" fill="#f0f9ff" stroke="#0369a1" stroke-width="5"/><path d="M80 26v85M49 44c18 24 26 47 31 69M111 44c-18 24-26 47-31 69" stroke="#38bdf8" stroke-width="5" fill="none"/><circle cx="63" cy="92" r="8" fill="#0f172a"/><circle cx="97" cy="92" r="8" fill="#0f172a"/><path d="M69 112c8 6 14 6 22 0" stroke="#0369a1" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`);
+          write('public/monster_coral.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="142" rx="48" ry="8" fill="#000" opacity=".18"/><path d="M38 80c0-27 18-43 42-43s42 16 42 43-18 50-42 50-42-23-42-50z" fill="#fb7185" stroke="#9f1239" stroke-width="5"/><path d="M42 77L18 56M118 77l24-21M48 111l-24 18M112 111l24 18" stroke="#9f1239" stroke-width="9" stroke-linecap="round"/><circle cx="65" cy="76" r="9" fill="#fff"/><circle cx="95" cy="76" r="9" fill="#fff"/><circle cx="67" cy="78" r="4" fill="#111827"/><circle cx="93" cy="78" r="4" fill="#111827"/><path d="M66 99c10 7 18 7 28 0" stroke="#7f1d1d" stroke-width="5" fill="none" stroke-linecap="round"/><text x="80" y="52" text-anchor="middle" font-family="Arial" font-size="20" font-weight="900" fill="#fff">SEA</text></svg>`);
+          write('public/monster_drone.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="143" rx="46" ry="8" fill="#000" opacity=".18"/><rect x="38" y="47" width="84" height="66" rx="24" fill="#8b5cf6" stroke="#312e81" stroke-width="5"/><circle cx="80" cy="78" r="23" fill="#dbeafe" stroke="#1d4ed8" stroke-width="5"/><circle cx="80" cy="78" r="10" fill="#0f172a"/><path d="M34 62L14 48M126 62l20-14M44 112l-12 20M116 112l12 20" stroke="#312e81" stroke-width="9" stroke-linecap="round"/><rect x="52" y="103" width="18" height="15" rx="4" fill="#22c55e"/><rect x="75" y="103" width="18" height="15" rx="4" fill="#facc15"/><rect x="98" y="103" width="18" height="15" rx="4" fill="#ef4444"/></svg>`);
+          write('public/monster_comet.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="82" cy="143" rx="45" ry="8" fill="#000" opacity=".18"/><path d="M22 91c38 6 65-8 87-45-1 41-17 70-50 87 11-12 16-25 13-40-14 7-31 6-50-2z" fill="#f59e0b" opacity=".9"/><circle cx="95" cy="70" r="38" fill="#38bdf8" stroke="#075985" stroke-width="5"/><circle cx="82" cy="67" r="8" fill="#0f172a"/><circle cx="108" cy="67" r="8" fill="#0f172a"/><path d="M86 88c7 6 13 6 20 0" stroke="#075985" stroke-width="5" fill="none" stroke-linecap="round"/><text x="95" y="118" text-anchor="middle" font-family="Arial" font-size="20" font-weight="900" fill="#fff">GO</text></svg>`);
+
+          const forestMonster = `  {\n    id: 'forest_sprite', name: 'Forest Sprite', nameCn: '森林键灵', image: 'monster_forest.png',\n    hp: 220, maxHp: 220, attackDamage: 22, isBoss: false, baseXp: 70, baseCoins: 32,\n    description: '守在森林深处的组合键精灵，会连续抛出更快的双键挑战',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.8, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.55, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.45, count: 5 },\n    ],\n  },\n`;
+          const townMonsters = `  {\n    id: 'pencil_imp', name: 'Pencil Imp', nameCn: '铅笔小怪', image: 'monster_pencil.svg',\n    hp: 215, maxHp: 215, attackDamage: 30, isBoss: false, baseXp: 55, baseCoins: 26,\n    description: '挥舞铅笔的小怪，专门考验短单词的准确输入',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 2, timeMultiplier: 0.85, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.58, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.48, count: 5 },\n    ],\n  },\n  {\n    id: 'scroll_sprite', name: 'Scroll Sprite', nameCn: '卷轴精灵', image: 'monster_scroll.svg',\n    hp: 230, maxHp: 230, attackDamage: 32, isBoss: false, baseXp: 62, baseCoins: 30,\n    description: '从卷轴里飞出的单词精灵，节奏比飞行书怪更快',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.8, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.55, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.45, count: 5 },\n    ],\n  },\n  {\n    id: 'ink_sprite', name: 'Ink Sprite', nameCn: '墨水精灵', image: 'monster_ink.svg',\n    hp: 245, maxHp: 245, attackDamage: 34, isBoss: false, baseXp: 70, baseCoins: 35,\n    description: '调皮的墨水精灵，会用更高血量拖住短词练习',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.78, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.52, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.45, count: 5 },\n    ],\n  },\n`;
+          const oceanMonsters = `  {\n    id: 'shell_guard', name: 'Shell Guard', nameCn: '贝壳卫士', image: 'monster_shell.svg',\n    hp: 260, maxHp: 260, attackDamage: 34, isBoss: false, baseXp: 68, baseCoins: 32,\n    description: '藏在贝壳中的海洋卫士，开始加入更长的海洋单词',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 4, timeMultiplier: 0.58, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.48, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.46, count: 5 },\n    ],\n  },\n  {\n    id: 'bubble_jelly', name: 'Bubble Jelly', nameCn: '泡泡水母', image: 'monster_ocean.png',\n    hp: 280, maxHp: 280, attackDamage: 36, isBoss: false, baseXp: 76, baseCoins: 38,\n    description: '带着键位泡泡的水母，会连续抛出长单词',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.56, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.46, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.44, count: 5 },\n    ],\n  },\n  {\n    id: 'coral_crab', name: 'Coral Crab', nameCn: '珊瑚蟹', image: 'monster_coral.svg',\n    hp: 300, maxHp: 300, attackDamage: 38, isBoss: false, baseXp: 84, baseCoins: 44,\n    description: '横着移动的珊瑚蟹，长单词压力更高',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.54, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.44, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.42, count: 5 },\n    ],\n  },\n`;
+          const spaceMonsters = `  {\n    id: 'key_drone', name: 'Key Drone', nameCn: '按键无人机', image: 'monster_drone.svg',\n    hp: 320, maxHp: 320, attackDamage: 38, isBoss: false, baseXp: 85, baseCoins: 52,\n    description: '太空中的按键无人机，会快速扫描短句',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.52, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.34, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.36, count: 5 },\n    ],\n  },\n  {\n    id: 'comet_typer', name: 'Comet Typer', nameCn: '彗星打字手', image: 'monster_comet.svg',\n    hp: 345, maxHp: 345, attackDamage: 40, isBoss: false, baseXp: 96, baseCoins: 60,\n    description: '拖着光尾的彗星怪，会把短句节奏再提高一点',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.5, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.34, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.36, count: 5 },\n    ],\n  },\n  {\n    id: 'space_probe', name: 'Space Probe', nameCn: '星际探测器', image: 'monster_space.png',\n    hp: 370, maxHp: 370, attackDamage: 42, isBoss: false, baseXp: 110, baseCoins: 68,\n    description: '星际探测器会在最终 Boss 前测试更长句子的稳定性',\n    waves: [\n      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.48, count: 5 },\n      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.32, count: 6 },\n      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.36, count: 5 },\n    ],\n  },\n`;
+
+          replaceOnce('src/gameData.ts', "  {\n    id: 'forest_boss',", forestMonster + "  {\n    id: 'forest_boss',");
+          replaceOnce('src/gameData.ts', "  {\n    id: 'town_boss',", townMonsters + "  {\n    id: 'town_boss',");
+          replaceOnce('src/gameData.ts', "  {\n    id: 'ocean_boss',", oceanMonsters + "  {\n    id: 'ocean_boss',");
+          replaceOnce('src/gameData.ts', "  {\n    id: 'space_boss',", spaceMonsters + "  {\n    id: 'space_boss',");
+
+          const levelReplacements = [
+            ["{ id: 'l9', name: '第9关', monsterId: 'stump'", "{ id: 'l9', name: '第9关', monsterId: 'forest_sprite'"],
+            ["{ id: 'l12', name: '第12关', monsterId: 'book'", "{ id: 'l12', name: '第12关', monsterId: 'pencil_imp'"],
+            ["{ id: 'l13', name: '第13关', monsterId: 'book'", "{ id: 'l13', name: '第13关', monsterId: 'scroll_sprite'"],
+            ["{ id: 'l14', name: '第14关', monsterId: 'book'", "{ id: 'l14', name: '第14关', monsterId: 'ink_sprite'"],
+            ["{ id: 'l17', name: '第17关', monsterId: 'jelly'", "{ id: 'l17', name: '第17关', monsterId: 'shell_guard'"],
+            ["{ id: 'l18', name: '第18关', monsterId: 'jelly'", "{ id: 'l18', name: '第18关', monsterId: 'bubble_jelly'"],
+            ["{ id: 'l19', name: '第19关', monsterId: 'jelly'", "{ id: 'l19', name: '第19关', monsterId: 'coral_crab'"],
+            ["{ id: 'l22', name: '第22关', monsterId: 'robot'", "{ id: 'l22', name: '第22关', monsterId: 'key_drone'"],
+            ["{ id: 'l23', name: '第23关', monsterId: 'robot'", "{ id: 'l23', name: '第23关', monsterId: 'comet_typer'"],
+            ["{ id: 'l24', name: '第24关', monsterId: 'robot'", "{ id: 'l24', name: '第24关', monsterId: 'space_probe'"],
+          ];
+          for (const [from, to] of levelReplacements) replaceOnce('src/gameData.ts', from, to);
+
+          replaceOnce('src/App.tsx', 'src="hero.png" alt="Hero" className="w-36', 'src="hero_avatar.svg" alt="Hero" className="w-36');
+          replaceOnce('src/App.tsx', 'src="hero.png" alt="Hero" className="w-24', 'src="hero_avatar.svg" alt="Hero" className="w-24');
+          replaceOnce('src/App.tsx', 'v0.13.0 | 本地进度自动保存', 'v0.14.0 | 本地进度自动保存');
+          replaceOnce('src/App.tsx', `<div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 flex items-center justify-center text-4xl shadow-lg">\n              🧙\n            </div>`, `<div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 flex items-center justify-center shadow-lg overflow-hidden">\n              <img src="hero_avatar.svg" alt="Hero" className="w-20 h-20 object-contain" />\n            </div>`);
+
+          for (const file of ['package.json', 'package-lock.json']) {
+            const json = JSON.parse(fs.readFileSync(file, 'utf8'));
+            json.version = '0.14.0';
+            if (json.packages && json.packages['']) json.packages[''].version = '0.14.0';
+            fs.writeFileSync(file, JSON.stringify(json, null, 2) + '\n');
+          }
+
+          const gd = fs.readFileSync('src/gameData.ts', 'utf8');
+          const assets = [...gd.matchAll(/image: '([^']+)'/g)].map(m => m[1]);
+          const missing = assets.filter(a => !fs.existsSync(`public/${a}`));
+          if (missing.length) throw new Error(`Missing monster assets: ${missing.join(', ')}`);
+          NODE
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Commit patch and remove workflow
+        run: |
+          rm .github/workflows/apply-visual-variety-update.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/gameData.ts src/App.tsx package.json package-lock.json public/*.svg .github/workflows/apply-visual-variety-update.yml
+          git commit -m "Improve character visuals and level variety"
+          git push
