@@ -65,6 +65,8 @@ interface GameState {
     combo: number;
     maxCombo: number;
     isRunning: boolean;
+    rewardClaimed: boolean;
+    recordSaved: boolean;
     rewards: { coins: number; xp: number };
   } | null;
   freeLeaderboard: Array<{
@@ -228,6 +230,32 @@ function loadFromSlot(slotIndex: number): GameState {
   };
 }
 
+function settleFreeModeRewards(state: GameState, freeMode: NonNullable<GameState['freeMode']>, timeLeft: number): GameState {
+  if (freeMode.rewardClaimed) {
+    return { ...state, screen: 'FREE_RESULT', freeMode: { ...freeMode, timeLeft, isRunning: false } };
+  }
+
+  const coins = freeMode.correctCount * freeMode.rewards.coins;
+  const xp = freeMode.correctCount * freeMode.rewards.xp;
+  const newXp = state.player.xp + xp;
+  const levelInfo = getPlayerLevel(newXp);
+  const didLevelUp = levelInfo.level > state.player.level;
+
+  return {
+    ...state,
+    screen: 'FREE_RESULT',
+    player: {
+      ...state.player,
+      coins: state.player.coins + coins,
+      xp: newXp,
+      level: levelInfo.level,
+      maxHp: levelInfo.maxHp,
+      hp: didLevelUp ? levelInfo.maxHp : Math.min(levelInfo.maxHp, state.player.hp + Math.min(10, freeMode.correctCount)),
+    },
+    freeMode: { ...freeMode, timeLeft, isRunning: false, rewardClaimed: true },
+  };
+}
+
 // ============ Reducer ============
 function reducer(s: GameState, a: Action): GameState {
   const setScreen = (sc: GameScreen) => ({ ...s, prevScreen: s.screen, screen: sc });
@@ -279,12 +307,12 @@ function reducer(s: GameState, a: Action): GameState {
     case 'START_FREE_PLAY': {
       const { difficulty, timeLimit } = a.payload;
       const c = getRandomFreeContent(difficulty, []);
-      return { ...setScreen('FREE_PLAY'), freeMode: { difficulty, timeLeft: timeLimit, timeLimit, targetText: c.text, playerInput: '', correctCount: 0, totalChars: 0, wordCount: 0, currentContent: c, isNewWord: false, combo: 0, maxCombo: 0, isRunning: true, rewards: { coins: getFreeContentReward(difficulty, true), xp: getFreeContentReward(difficulty, true) } } };
+      return { ...setScreen('FREE_PLAY'), freeMode: { difficulty, timeLeft: timeLimit, timeLimit, targetText: c.text, playerInput: '', correctCount: 0, totalChars: 0, wordCount: 0, currentContent: c, isNewWord: false, combo: 0, maxCombo: 0, isRunning: true, rewardClaimed: false, recordSaved: false, rewards: { coins: getFreeContentReward(difficulty, true), xp: getFreeContentReward(difficulty, true) } } };
     }
     case 'FREE_TICK': {
       if (!s.freeMode || !s.freeMode.isRunning) return s;
       const nt = s.freeMode.timeLeft - 0.1;
-      if (nt <= 0) return { ...s, screen: 'FREE_RESULT', freeMode: { ...s.freeMode, timeLeft: 0, isRunning: false } };
+      if (nt <= 0) return settleFreeModeRewards(s, s.freeMode, 0);
       return { ...s, freeMode: { ...s.freeMode, timeLeft: nt } };
     }
     case 'FREE_TYPE': {
@@ -308,7 +336,7 @@ function reducer(s: GameState, a: Action): GameState {
       if (!s.freeMode || !s.freeMode.isRunning) return s;
       return { ...s, freeMode: { ...s.freeMode, playerInput: s.freeMode.playerInput.slice(0, -1) } };
     }
-    case 'END_FREE_PLAY': return { ...s, screen: 'FREE_RESULT', freeMode: s.freeMode ? { ...s.freeMode, isRunning: false } : null };
+    case 'END_FREE_PLAY': return s.freeMode ? settleFreeModeRewards(s, s.freeMode, s.freeMode.timeLeft) : { ...s, screen: 'FREE_RESULT', freeMode: null };
     case 'START_LEVEL': {
       const lv = getLevelById(a.payload); if (!lv) return s;
       const m = getMonsterById(lv.monsterId); if (!m) return s;
@@ -402,14 +430,15 @@ function reducer(s: GameState, a: Action): GameState {
         if (nt <= 0) {
           const md = calculateMonsterDamage(b.monster.attackDamage, s.player.defenseBoost);
           const nph = Math.max(0, b.playerHp - md);
-          return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, battleStatus: 'monster_attack', lastDamage: md, shakeScreen: true, defensePrompt: '' } };
+          return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, combo: 0, totalErrors: b.totalErrors + b.roundErrors, roundResults: [...b.roundResults, { correct: false, timeLeft: 0, timeLimit: b.timeLimit, errors: b.roundErrors, text: b.targetText }], battleStatus: 'monster_attack', lastDamage: md, shakeScreen: true, defensePrompt: '' }, totalInputs: s.totalInputs + b.targetText.length, totalTimeouts: s.totalTimeouts + 1 };
         }
         return { ...s, battle: { ...b, timeLeft: nt } };
       }
       if (b.battleStatus !== 'typing') return s;
       const nt = b.timeLeft - 0.1;
       if (nt <= 0) {
-        if (b.currentRound > 2 && b.combo >= 2) {
+        const canUseShield = b.monster.isBoss && b.currentRound % 4 === 0;
+        if (canUseShield) {
           return { ...s, battle: { ...b, timeLeft: 3, battleStatus: 'shield_phase', defensePrompt: b.targetText[0] || 'A', roundErrors: b.roundErrors + 1 } };
         }
         const md = calculateMonsterDamage(b.monster.attackDamage, s.player.defenseBoost);
@@ -418,7 +447,13 @@ function reducer(s: GameState, a: Action): GameState {
       }
       return { ...s, battle: { ...b, timeLeft: nt } };
     }
-    case 'ACTIVATE_SHIELD': { if (!s.battle || s.battle.battleStatus !== 'shield_phase') return s; const b = s.battle; const rd = Math.max(1, Math.floor(calculateMonsterDamage(b.monster.attackDamage, s.player.defenseBoost) * 0.3)); const nph = Math.max(0, b.playerHp - rd); return { ...s, battle: { ...b, playerHp: nph, battleStatus: 'monster_attack', lastDamage: rd, shakeScreen: true, defensePrompt: '' } }; }
+    case 'ACTIVATE_SHIELD': {
+      if (!s.battle || s.battle.battleStatus !== 'shield_phase') return s;
+      const b = s.battle;
+      const rd = Math.max(1, Math.floor(calculateMonsterDamage(b.monster.attackDamage, s.player.defenseBoost) * 0.3));
+      const nph = Math.max(0, b.playerHp - rd);
+      return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, combo: 0, totalErrors: b.totalErrors + b.roundErrors, roundResults: [...b.roundResults, { correct: false, timeLeft: 0, timeLimit: b.timeLimit, errors: b.roundErrors, text: b.targetText }], battleStatus: 'monster_attack', lastDamage: rd, shakeScreen: true, defensePrompt: '' }, totalInputs: s.totalInputs + b.targetText.length, totalTimeouts: s.totalTimeouts + 1 };
+    }
     case 'END_BATTLE_ANIMATION': {
       if (!s.battle) return s; const b = s.battle;
       if (b.battleStatus === 'player_attack') {
@@ -448,7 +483,7 @@ function reducer(s: GameState, a: Action): GameState {
         const isNew = (c.type === 'word' || c.type === 'phrase') && !s.wordsSeen.includes(c.text);
         return { ...s, screen: 'BATTLE', battle: { ...b, currentRound: nr, currentWaveIndex: waveIndex, targetText: c.text, playerInput: '', timeLeft: tl, timeLimit: tl, roundErrors: 0, usedTexts: [...b.usedTexts, c.text], currentContent: c, battleStatus: 'typing', showComboPopup: false, isNewWord: isNew } };
       }
-      if (b.battleStatus === 'monster_attack' || b.battleStatus === 'shield_phase') {
+      if (b.battleStatus === 'monster_attack') {
         if (b.playerHp <= 0) { playDefeatSound(); return { ...s, screen: 'RESULT', battle: { ...b, battleStatus: 'defeat', shakeScreen: false, showComboPopup: false }, totalBattles: s.totalBattles + 1, player: { ...s.player, hp: Math.max(1, b.playerHp) } }; }
         const nr = Math.min(b.currentRound + 1, b.maxRounds);
         const { wave, waveIndex } = getWaveForRound(b.monster, nr);
@@ -473,6 +508,7 @@ function reducer(s: GameState, a: Action): GameState {
     case 'SAVE_FREE_RECORD': {
       if (!s.freeMode) return s;
       const fm = s.freeMode;
+      if (fm.recordSaved) return s;
       const score = fm.correctCount * fm.rewards.coins + fm.maxCombo * 2;
       const newRecord = {
         id: Date.now().toString(),
@@ -486,7 +522,7 @@ function reducer(s: GameState, a: Action): GameState {
       };
       const updated = [...s.freeLeaderboard, newRecord].sort((a, b) => b.score - a.score).slice(0, 50);
       localStorage.setItem('typingLeaderboard', JSON.stringify(updated));
-      return { ...s, player: { ...s.player, coins: s.player.coins + score }, freeLeaderboard: updated };
+      return { ...s, freeMode: { ...fm, recordSaved: true }, freeLeaderboard: updated };
     }
     case 'BUY_ITEM': {
       const item = s.shopInventory.find(i => i.id === a.payload);
@@ -799,8 +835,8 @@ function BattleScreen({ state, dispatch }: { state: GameState; dispatch: React.D
   const isUrgent = timerRatio <= 0.3;
   const nextChar = battle.targetText[battle.playerInput.length] || '';
 
-  useEffect(() => { if (battle.battleStatus === 'typing') { const iv = setInterval(() => dispatch({ type: 'TICK_TIMER' }), 100); return () => clearInterval(iv); } }, [battle.battleStatus, dispatch]);
-  useEffect(() => { if (battle.battleStatus === 'player_attack' || battle.battleStatus === 'monster_attack' || battle.battleStatus === 'shield_phase') { const delay = battle.battleStatus === 'player_attack' ? 900 : 1000; const t = setTimeout(() => dispatch({ type: 'END_BATTLE_ANIMATION' }), delay); return () => clearTimeout(t); } }, [battle.battleStatus, dispatch]);
+  useEffect(() => { if (battle.battleStatus === 'typing' || battle.battleStatus === 'shield_phase') { const iv = setInterval(() => dispatch({ type: 'TICK_TIMER' }), 100); return () => clearInterval(iv); } }, [battle.battleStatus, dispatch]);
+  useEffect(() => { if (battle.battleStatus === 'player_attack' || battle.battleStatus === 'monster_attack') { const delay = battle.battleStatus === 'player_attack' ? 900 : 1000; const t = setTimeout(() => dispatch({ type: 'END_BATTLE_ANIMATION' }), delay); return () => clearTimeout(t); } }, [battle.battleStatus, dispatch]);
   useEffect(() => { if (battle.battleStatus === 'player_attack') spawn(window.innerWidth * 0.65, window.innerHeight * 0.4, 20, '#EF5350'); else if (battle.battleStatus === 'monster_attack') spawn(window.innerWidth * 0.35, window.innerHeight * 0.4, 15, '#E53935'); }, [battle.battleStatus, spawn]);
   useEffect(() => { const h = (e: KeyboardEvent) => { if (battle.battleStatus === 'shield_phase') { dispatch({ type: 'ACTIVATE_SHIELD' }); return; } if (battle.battleStatus !== 'typing') return; if (e.key === 'Backspace') { e.preventDefault(); dispatch({ type: 'BACKSPACE' }); return; } if (e.key.length === 1 && /[a-zA-Z ]/.test(e.key)) { e.preventDefault(); dispatch({ type: 'TYPE_CHAR', payload: e.key }); } }; window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h); }, [battle.battleStatus, dispatch]);
 
@@ -829,7 +865,7 @@ function BattleScreen({ state, dispatch }: { state: GameState; dispatch: React.D
           <div className={`relative ${battle.battleStatus === 'player_attack' ? 'animate-hero-attack' : ''}`}>
             <img src="hero.png" alt="Hero" className="w-24 h-auto object-contain" style={{ animation: battle.battleStatus === 'typing' ? 'breathe 1.5s ease-in-out infinite' : 'none' }} />
             {battle.battleStatus === 'player_attack' && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-green-600 font-black animate-damage-float">-{battle.lastDamage}</div>}
-            {(battle.battleStatus === 'monster_attack' || battle.battleStatus === 'shield_phase') && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-600 font-black animate-damage-float">-{battle.lastDamage}</div>}
+            {battle.battleStatus === 'monster_attack' && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-600 font-black animate-damage-float">-{battle.lastDamage}</div>}
           </div>
         </div>
         <div className="text-center"><span className="text-4xl font-black text-red-400/30">VS</span>{battle.showComboPopup && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-combo-pop"><span className="text-5xl">💥</span></div>}</div>
@@ -1405,6 +1441,7 @@ function FreePlayScreen({ state, dispatch }: { state: GameState; dispatch: React
 function FreeResultScreen({ state: _state, dispatch }: { state: GameState; dispatch: React.Dispatch<Action> }) {
   const fm = _state.freeMode!;
   const totalReward = fm.correctCount * fm.rewards.coins;
+  const totalXp = fm.correctCount * fm.rewards.xp;
   const diffLabel = fm.difficulty === 'letter' ? '字母' : fm.difficulty === 'combo' ? '组合' : fm.difficulty === 'word' ? '单词' : '句子';
 
   return (
@@ -1418,11 +1455,13 @@ function FreeResultScreen({ state: _state, dispatch }: { state: GameState; dispa
           <div className="flex justify-between"><span className="text-gray-500">输入字符</span><span className="font-black text-blue-600">{fm.totalChars}</span></div>
           <div className="flex justify-between"><span className="text-gray-500">单词数</span><span className="font-black text-purple-600">{fm.wordCount}</span></div>
         </div>
-        <div className="flex justify-center gap-4 mb-6">
+        <div className="flex justify-center gap-3 mb-2">
           <div className="flex items-center gap-2 bg-yellow-50 rounded-xl px-5 py-3 border border-yellow-200"><span className="text-2xl">🪙</span><span className="font-black text-yellow-700 text-lg">+{totalReward}</span></div>
+          <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-5 py-3 border border-blue-200"><span className="text-2xl">✨</span><span className="font-black text-blue-700 text-lg">+{totalXp}</span></div>
         </div>
+        <p className="text-center text-xs text-gray-400 mb-5">{fm.rewardClaimed ? '奖励已到账' : '奖励结算中'}</p>
         <div className="flex gap-2 mb-2">
-          <button onClick={() => dispatch({ type: 'SAVE_FREE_RECORD' })} className="flex-1 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-400 transition-all cursor-pointer text-sm">💾 保存记录</button>
+          <button onClick={() => dispatch({ type: 'SAVE_FREE_RECORD' })} disabled={fm.recordSaved} className={`flex-1 py-2 text-white font-bold rounded-lg transition-all text-sm ${fm.recordSaved ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-400 cursor-pointer'}`}>{fm.recordSaved ? '已保存' : '💾 保存记录'}</button>
           <button onClick={() => dispatch({ type: 'OPEN_FREE_LEADERBOARD' })} className="flex-1 py-2 bg-purple-500 text-white font-bold rounded-lg hover:bg-purple-400 transition-all cursor-pointer text-sm">🏆 排行榜</button>
         </div>
         <div className="flex gap-2">
