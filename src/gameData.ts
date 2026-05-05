@@ -674,7 +674,7 @@ export const monsters: Monster[] = [
     hp: 240, maxHp: 240, attackDamage: 32, isBoss: false, baseXp: 60, baseCoins: 27,
     description: '深海中漂浮的字母水母，长单词考验',
     waves: [
-      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 4, timeMultiplier: 0.7, count: 5 },
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 4, timeMultiplier: 0.6, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.5, count: 6 },
       { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.5, count: 5 },
     ],
@@ -696,9 +696,9 @@ export const monsters: Monster[] = [
     hp: 300, maxHp: 300, attackDamage: 36, isBoss: false, baseXp: 75, baseCoins: 45,
     description: '来自太空的打字机器人，句子挑战',
     waves: [
-      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.6, count: 5 },
-      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.4, count: 6 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.5, count: 5 },
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.55, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.35, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.38, count: 5 },
     ],
   },
   {
@@ -706,9 +706,9 @@ export const monsters: Monster[] = [
     hp: 500, maxHp: 500, attackDamage: 50, isBoss: true, baseXp: 200, baseCoins: 150,
     description: 'BOSS！统治银河的终极打字霸主',
     waves: [
-      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.5, count: 6 },
-      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.35, count: 7 },
-      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.5, count: 7 },
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.5, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.32, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.38, count: 5 },
     ],
   },
 ];
@@ -909,12 +909,15 @@ export function calculateMonsterDamage(attackDamage: number, defenseBoost: numbe
   return Math.max(1, attackDamage - reduction);
 }
 
-export function getTimeLimit(text: string, type: string, waveMultiplier: number): number {
+export function getTimeLimit(text: string, type: string, waveMultiplier: number, levelId?: string | null): number {
   // Base times increased for 6-year-old beginners (needs time to locate keys)
   const baseTimes: Record<string, number> = { letter: 5, combo: 5, word: 7, phrase: 11 };
   const base = baseTimes[type] || 5;
   const lengthBonus = Math.max(0, text.length - 3) * 1.0;
-  return Math.round((base + lengthBonus) * waveMultiplier);
+  const rawTime = Math.round((base + lengthBonus) * waveMultiplier);
+  const levelNumber = levelId?.startsWith('l') ? Number(levelId.slice(1)) : 0;
+  if (levelNumber >= 1 && levelNumber <= 15) return Math.max(2, rawTime - 1);
+  return rawTime;
 }
 
 export function getWaveForRound(monster: Monster, round: number): { wave: WaveConfig; waveIndex: number; roundInWave: number } {

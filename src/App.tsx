@@ -400,7 +400,7 @@ function reducer(s: GameState, a: Action): GameState {
       const isRepeat1 = s.currentLevelId ? s.completedLevels.includes(s.currentLevelId) : false;
       const timeP1 = isRepeat1 ? 0.8 : 1.0;
       const sandBonus = s.player.timeSandBattles > 0 ? 3 : 0;
-      const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost + sandBonus) * timeP1);
+      const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier, s.currentLevelId) + s.player.timeBoost + sandBonus) * timeP1);
       const isNew = (c.type === 'word' || c.type === 'phrase') && !s.wordsSeen.includes(c.text);
       const newSandBattles = s.player.timeSandBattles > 0 ? s.player.timeSandBattles - 1 : s.player.timeSandBattles;
       return { ...s, screen: 'BATTLE', player: { ...s.player, timeSandBattles: newSandBattles }, battle: { ...s.battle, targetText: c.text, timeLeft: tl, timeLimit: tl, playerInput: '', usedTexts: [c.text], currentContent: c, currentWaveIndex: 0, battleStatus: 'typing', isNewWord: isNew } };
@@ -484,7 +484,7 @@ function reducer(s: GameState, a: Action): GameState {
         const c = getRandomContent(wave, b.usedTexts, s.currentStage);
         const isRepeat2 = s.currentLevelId ? s.completedLevels.includes(s.currentLevelId) : false;
         const timeP2 = isRepeat2 ? 0.8 : 1.0;
-        const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost + (s.player.timeSandBattles > 0 ? 3 : 0)) * timeP2);
+        const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier, s.currentLevelId) + s.player.timeBoost + (s.player.timeSandBattles > 0 ? 3 : 0)) * timeP2);
         const isNew = (c.type === 'word' || c.type === 'phrase') && !s.wordsSeen.includes(c.text);
         return { ...s, screen: 'BATTLE', battle: { ...b, currentRound: nr, currentWaveIndex: waveIndex, targetText: c.text, playerInput: '', timeLeft: tl, timeLimit: tl, roundErrors: 0, usedTexts: [...b.usedTexts, c.text], currentContent: c, battleStatus: 'typing', showComboPopup: false, isNewWord: isNew } };
       }
@@ -495,7 +495,7 @@ function reducer(s: GameState, a: Action): GameState {
         const c = getRandomContent(wave, b.usedTexts, s.currentStage);
         const isRepeat3 = s.currentLevelId ? s.completedLevels.includes(s.currentLevelId) : false;
         const timeP3 = isRepeat3 ? 0.8 : 1.0;
-        const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier) + s.player.timeBoost + (s.player.timeSandBattles > 0 ? 3 : 0)) * timeP3);
+        const tl = Math.round((getTimeLimit(c.text, c.type, wave.timeMultiplier, s.currentLevelId) + s.player.timeBoost + (s.player.timeSandBattles > 0 ? 3 : 0)) * timeP3);
         const isNew = (c.type === 'word' || c.type === 'phrase') && !s.wordsSeen.includes(c.text);
         return { ...s, screen: 'BATTLE', battle: { ...b, currentRound: nr, currentWaveIndex: waveIndex, targetText: c.text, playerInput: '', timeLeft: tl, timeLimit: tl, roundErrors: 0, usedTexts: [...b.usedTexts, c.text], currentContent: c, battleStatus: 'typing', shakeScreen: false, showComboPopup: false, defensePrompt: '', isNewWord: isNew } };
       }
