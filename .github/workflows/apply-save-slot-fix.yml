@@ -1,0 +1,122 @@
+name: Apply active save slot fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-save-slot-fix.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: save-slot-fix
+  cancel-in-progress: false
+
+jobs:
+  apply-build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Patch active save slot persistence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/App.tsx')
+          text = path.read_text(encoding='utf-8')
+
+          def once(old, new):
+              global text
+              if old in text:
+                  text = text.replace(old, new, 1)
+
+          once('  battlesWon: number;\n  playerName: string;\n  isLoggedIn: boolean;\n  completedLevels: string[];',
+               '  battlesWon: number;\n  playerName: string;\n  isLoggedIn: boolean;\n  currentSaveSlot: number;\n  completedLevels: string[];')
+          once("  | { type: 'LOGIN'; payload: string }",
+               "  | { type: 'LOGIN'; payload: { name: string; slot: number } }")
+          once('    completedLevels: state.completedLevels,\n    freeLeaderboard: state.freeLeaderboard,',
+               '    completedLevels: state.completedLevels,\n    currentSaveSlot: state.currentSaveSlot,\n    freeLeaderboard: state.freeLeaderboard,')
+          once("    playerName: '', isLoggedIn: false, completedLevels: [],",
+               "    playerName: '', isLoggedIn: false, currentSaveSlot: 0, completedLevels: [],")
+          once("    playerName: '', isLoggedIn: false, completedLevels: [],",
+               "    playerName: '', isLoggedIn: false, currentSaveSlot: slotIndex, completedLevels: [],")
+          once("    isLoggedIn: true,\n    completedLevels: saved.completedLevels || [],",
+               "    isLoggedIn: true,\n    currentSaveSlot: saved.currentSaveSlot ?? slotIndex,\n    completedLevels: saved.completedLevels || [],")
+          once('  return {\n    ...state,\n    screen: \'FREE_RESULT\',',
+               '  const nextState = {\n    ...state,\n    screen: \'FREE_RESULT\',')
+          once("    freeMode: { ...freeMode, timeLeft, isRunning: false, rewardClaimed: true },\n  };\n}\n\n// ============ Reducer ============",
+               "    freeMode: { ...freeMode, timeLeft, isRunning: false, rewardClaimed: true },\n  };\n  if (nextState.isLoggedIn) saveToSlot(nextState.currentSaveSlot, nextState);\n  return nextState;\n}\n\n// ============ Reducer ============")
+          once("      const name = a.payload.trim() || '小冒险者';\n      return { ...s, playerName: name, isLoggedIn: true, screen: s.showTutorial ? 'TUTORIAL' : 'WORLD_SELECT', prevScreen: s.screen };",
+               "      const name = a.payload.name.trim() || '小冒险者';\n      return { ...s, playerName: name, currentSaveSlot: a.payload.slot, isLoggedIn: true, screen: s.showTutorial ? 'TUTORIAL' : 'WORLD_SELECT', prevScreen: s.screen };")
+          once("    case 'SELECT_SLOT': {\n      return { ...s };\n    }",
+               "    case 'SELECT_SLOT': {\n      return { ...s, currentSaveSlot: a.payload };\n    }")
+          once("    dispatch({ type: 'LOGIN', payload: name.trim() });",
+               "    dispatch({ type: 'LOGIN', payload: { name: name.trim(), slot: selectedSlot } });")
+          once('  // Auto-save game progress to slot 0 (current active slot)',
+               '  // Auto-save game progress to the active save slot.')
+          once('    saveToSlot(0, state);',
+               '    saveToSlot(state.currentSaveSlot, state);')
+          once('[state.player, state.currentWorldId, state.wordsLearned, state.wordsSeen, state.totalBattles, state.battlesWon, state.defeatedMonsters, state.completedLevels, state.levelProgress, state.shopInventory, state.missions, state.isLoggedIn]',
+               '[state.player, state.currentSaveSlot, state.currentWorldId, state.wordsLearned, state.wordsSeen, state.totalBattles, state.battlesWon, state.defeatedMonsters, state.completedLevels, state.levelProgress, state.shopInventory, state.missions, state.freeLeaderboard, state.isLoggedIn]')
+
+          required = [
+              'currentSaveSlot: number;',
+              "payload: { name: string; slot: number }",
+              'currentSaveSlot: state.currentSaveSlot,',
+              'currentSaveSlot: saved.currentSaveSlot ?? slotIndex,',
+              'saveToSlot(nextState.currentSaveSlot, nextState)',
+              "payload: { name: name.trim(), slot: selectedSlot }",
+              'saveToSlot(state.currentSaveSlot, state)',
+          ]
+          missing = [item for item in required if item not in text]
+          if missing:
+              raise SystemExit('Missing expected save-slot fixes: ' + ', '.join(missing))
+          if 'saveToSlot(0, state)' in text:
+              raise SystemExit('Old fixed slot autosave is still present')
+
+          path.write_text(text, encoding='utf-8', newline='\n')
+          PY
+
+      - name: Commit gameplay persistence fix
+        run: |
+          if [ -n "$(git status --porcelain src/App.tsx)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/App.tsx
+            git commit -m "fix: persist free challenge rewards to active save slot"
+            git push
+          else
+            echo "No App.tsx changes needed."
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+
+      - name: Remove temporary workflow
+        run: |
+          git rm .github/workflows/apply-save-slot-fix.yml
+          git commit -m "chore: remove temporary save slot fix workflow"
+          git push
