@@ -636,6 +636,16 @@ export const monsters: Monster[] = [
     ],
   },
   {
+    id: 'forest_sprite', name: 'Forest Sprite', nameCn: '森林键灵', image: 'monster_forest.png',
+    hp: 220, maxHp: 220, attackDamage: 22, isBoss: false, baseXp: 70, baseCoins: 32,
+    description: '守在森林深处的组合键精灵，会连续抛出更快的双键挑战',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.8, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.55, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 1, word: 0, phrase: 0 }, maxStage: 1, timeMultiplier: 0.45, count: 5 },
+    ],
+  },
+  {
     id: 'forest_boss', name: 'Ancient Oak', nameCn: '远古橡树', image: 'forest_boss.png',
     hp: 350, maxHp: 350, attackDamage: 30, isBoss: true, baseXp: 120, baseCoins: 83,
     description: 'BOSS！森林深处的远古守护者，全组合考验',
@@ -655,6 +665,36 @@ export const monsters: Monster[] = [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 2, timeMultiplier: 0.9, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.6, count: 6 },
       { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.5, count: 5 },
+    ],
+  },
+  {
+    id: 'pencil_imp', name: 'Pencil Imp', nameCn: '铅笔小怪', image: 'monster_pencil.svg',
+    hp: 215, maxHp: 215, attackDamage: 30, isBoss: false, baseXp: 55, baseCoins: 26,
+    description: '挥舞铅笔的小怪，专门考验短单词的准确输入',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 2, timeMultiplier: 0.85, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.58, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.48, count: 5 },
+    ],
+  },
+  {
+    id: 'scroll_sprite', name: 'Scroll Sprite', nameCn: '卷轴精灵', image: 'monster_scroll.svg',
+    hp: 230, maxHp: 230, attackDamage: 32, isBoss: false, baseXp: 62, baseCoins: 30,
+    description: '从卷轴里飞出的单词精灵，节奏比飞行书怪更快',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.8, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.55, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.45, count: 5 },
+    ],
+  },
+  {
+    id: 'ink_sprite', name: 'Ink Sprite', nameCn: '墨水精灵', image: 'monster_ink.svg',
+    hp: 245, maxHp: 245, attackDamage: 34, isBoss: false, baseXp: 70, baseCoins: 35,
+    description: '调皮的墨水精灵，会用更高血量拖住短词练习',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.78, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.52, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 3, timeMultiplier: 0.45, count: 5 },
     ],
   },
   {
@@ -680,6 +720,36 @@ export const monsters: Monster[] = [
     ],
   },
   {
+    id: 'shell_guard', name: 'Shell Guard', nameCn: '贝壳卫士', image: 'monster_shell.svg',
+    hp: 260, maxHp: 260, attackDamage: 34, isBoss: false, baseXp: 68, baseCoins: 32,
+    description: '藏在贝壳中的海洋卫士，开始加入更长的海洋单词',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 4, timeMultiplier: 0.58, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.48, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.46, count: 5 },
+    ],
+  },
+  {
+    id: 'bubble_jelly', name: 'Bubble Jelly', nameCn: '泡泡水母', image: 'monster_ocean.png',
+    hp: 280, maxHp: 280, attackDamage: 36, isBoss: false, baseXp: 76, baseCoins: 38,
+    description: '带着键位泡泡的水母，会连续抛出长单词',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.56, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.46, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.44, count: 5 },
+    ],
+  },
+  {
+    id: 'coral_crab', name: 'Coral Crab', nameCn: '珊瑚蟹', image: 'monster_coral.svg',
+    hp: 300, maxHp: 300, attackDamage: 38, isBoss: false, baseXp: 84, baseCoins: 44,
+    description: '横着移动的珊瑚蟹，长单词压力更高',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.54, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.44, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 1, phrase: 0 }, maxStage: 5, timeMultiplier: 0.42, count: 5 },
+    ],
+  },
+  {
     id: 'ocean_boss', name: 'Kraken Type', nameCn: '打字海怪', image: 'ocean_boss.png',
     hp: 420, maxHp: 420, attackDamage: 44, isBoss: true, baseXp: 150, baseCoins: 105,
     description: 'BOSS！深海中的打字海怪，超长单词',
@@ -699,6 +769,36 @@ export const monsters: Monster[] = [
       { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.55, count: 5 },
       { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.35, count: 6 },
       { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.38, count: 5 },
+    ],
+  },
+  {
+    id: 'key_drone', name: 'Key Drone', nameCn: '按键无人机', image: 'monster_drone.svg',
+    hp: 320, maxHp: 320, attackDamage: 38, isBoss: false, baseXp: 85, baseCoins: 52,
+    description: '太空中的按键无人机，会快速扫描短句',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.52, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.34, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.36, count: 5 },
+    ],
+  },
+  {
+    id: 'comet_typer', name: 'Comet Typer', nameCn: '彗星打字手', image: 'monster_comet.svg',
+    hp: 345, maxHp: 345, attackDamage: 40, isBoss: false, baseXp: 96, baseCoins: 60,
+    description: '拖着光尾的彗星怪，会把短句节奏再提高一点',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.5, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.34, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.36, count: 5 },
+    ],
+  },
+  {
+    id: 'space_probe', name: 'Space Probe', nameCn: '星际探测器', image: 'monster_space.png',
+    hp: 370, maxHp: 370, attackDamage: 42, isBoss: false, baseXp: 110, baseCoins: 68,
+    description: '星际探测器会在最终 Boss 前测试更长句子的稳定性',
+    waves: [
+      { name: '热身', nameEn: 'Warm-up', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 6, timeMultiplier: 0.48, count: 5 },
+      { name: '主力', nameEn: 'Main', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.32, count: 6 },
+      { name: '挑战', nameEn: 'Challenge', typeWeights: { letter: 0, combo: 0, word: 0, phrase: 1 }, maxStage: 7, timeMultiplier: 0.36, count: 5 },
     ],
   },
   {
@@ -737,7 +837,7 @@ export const worlds: WorldDef[] = [
       { id: 'l6', name: '第6关', monsterId: 'stump', unlockRequirement: 'l5', worldId: 'world2', stage: 1 },
       { id: 'l7', name: '第7关', monsterId: 'vine', unlockRequirement: 'l6', worldId: 'world2', stage: 1 },
       { id: 'l8', name: '第8关', monsterId: 'moss', unlockRequirement: 'l7', worldId: 'world2', stage: 1 },
-      { id: 'l9', name: '第9关', monsterId: 'stump', unlockRequirement: 'l8', worldId: 'world2', stage: 1 },
+      { id: 'l9', name: '第9关', monsterId: 'forest_sprite', unlockRequirement: 'l8', worldId: 'world2', stage: 1 },
       { id: 'l10', name: 'Boss战', monsterId: 'forest_boss', unlockRequirement: 'l9', worldId: 'world2', stage: 1 },
     ],
   },
@@ -748,9 +848,9 @@ export const worlds: WorldDef[] = [
     locked: true,
     levels: [
       { id: 'l11', name: '第11关', monsterId: 'book', unlockRequirement: 'l10', worldId: 'world3', stage: 2 },
-      { id: 'l12', name: '第12关', monsterId: 'book', unlockRequirement: 'l11', worldId: 'world3', stage: 2 },
-      { id: 'l13', name: '第13关', monsterId: 'book', unlockRequirement: 'l12', worldId: 'world3', stage: 3 },
-      { id: 'l14', name: '第14关', monsterId: 'book', unlockRequirement: 'l13', worldId: 'world3', stage: 3 },
+      { id: 'l12', name: '第12关', monsterId: 'pencil_imp', unlockRequirement: 'l11', worldId: 'world3', stage: 2 },
+      { id: 'l13', name: '第13关', monsterId: 'scroll_sprite', unlockRequirement: 'l12', worldId: 'world3', stage: 3 },
+      { id: 'l14', name: '第14关', monsterId: 'ink_sprite', unlockRequirement: 'l13', worldId: 'world3', stage: 3 },
       { id: 'l15', name: 'Boss战', monsterId: 'town_boss', unlockRequirement: 'l14', worldId: 'world3', stage: 3 },
     ],
   },
@@ -761,9 +861,9 @@ export const worlds: WorldDef[] = [
     locked: true,
     levels: [
       { id: 'l16', name: '第16关', monsterId: 'jelly', unlockRequirement: 'l15', worldId: 'world4', stage: 4 },
-      { id: 'l17', name: '第17关', monsterId: 'jelly', unlockRequirement: 'l16', worldId: 'world4', stage: 4 },
-      { id: 'l18', name: '第18关', monsterId: 'jelly', unlockRequirement: 'l17', worldId: 'world4', stage: 5 },
-      { id: 'l19', name: '第19关', monsterId: 'jelly', unlockRequirement: 'l18', worldId: 'world4', stage: 5 },
+      { id: 'l17', name: '第17关', monsterId: 'shell_guard', unlockRequirement: 'l16', worldId: 'world4', stage: 4 },
+      { id: 'l18', name: '第18关', monsterId: 'bubble_jelly', unlockRequirement: 'l17', worldId: 'world4', stage: 5 },
+      { id: 'l19', name: '第19关', monsterId: 'coral_crab', unlockRequirement: 'l18', worldId: 'world4', stage: 5 },
       { id: 'l20', name: 'Boss战', monsterId: 'ocean_boss', unlockRequirement: 'l19', worldId: 'world4', stage: 5 },
     ],
   },
@@ -774,9 +874,9 @@ export const worlds: WorldDef[] = [
     locked: true,
     levels: [
       { id: 'l21', name: '第21关', monsterId: 'robot', unlockRequirement: 'l20', worldId: 'world5', stage: 6 },
-      { id: 'l22', name: '第22关', monsterId: 'robot', unlockRequirement: 'l21', worldId: 'world5', stage: 6 },
-      { id: 'l23', name: '第23关', monsterId: 'robot', unlockRequirement: 'l22', worldId: 'world5', stage: 6 },
-      { id: 'l24', name: '第24关', monsterId: 'robot', unlockRequirement: 'l23', worldId: 'world5', stage: 7 },
+      { id: 'l22', name: '第22关', monsterId: 'key_drone', unlockRequirement: 'l21', worldId: 'world5', stage: 6 },
+      { id: 'l23', name: '第23关', monsterId: 'comet_typer', unlockRequirement: 'l22', worldId: 'world5', stage: 6 },
+      { id: 'l24', name: '第24关', monsterId: 'space_probe', unlockRequirement: 'l23', worldId: 'world5', stage: 7 },
       { id: 'l25', name: 'Boss战', monsterId: 'space_boss', unlockRequirement: 'l24', worldId: 'world5', stage: 7 },
     ],
   },

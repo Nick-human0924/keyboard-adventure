@@ -682,11 +682,11 @@ function TitleScreen({ state, onStart, dispatch }: { state: GameState; onStart: 
             <button onClick={() => { if (confirm('确定要登出吗？进度会自动保存。')) dispatch({ type: 'LOGOUT' }); }} className="text-white/60 hover:text-white text-xs font-bold ml-2 cursor-pointer transition-colors">登出</button>
           </div>
         )}
-        <img src="hero.png" alt="Hero" className="w-36 h-auto mb-6 animate-breathe drop-shadow-2xl" />
+        <img src="hero_avatar.svg" alt="Hero" className="w-36 h-auto mb-6 animate-breathe drop-shadow-2xl" />
         <h1 className="text-6xl md:text-7xl font-black text-white mb-3 text-center tracking-tight" style={{ textShadow: '3px 3px 0 #388E3C, 0 6px 20px rgba(0,0,0,0.3)' }}>键盘冒险岛</h1>
         <p className="text-xl md:text-2xl font-bold text-white/90 mb-10 tracking-[0.3em] uppercase" style={{ textShadow: '1px 1px 4px rgba(0,0,0,0.5)' }}>Typing Adventure</p>
         <button onClick={onStart} className="px-14 py-5 bg-gradient-to-b from-green-400 to-green-600 hover:from-green-300 hover:to-green-500 text-white text-2xl font-black rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 animate-pulse-glow cursor-pointer border-2 border-green-300/50">开始冒险</button>
-        <p className="mt-6 text-white/60 text-sm font-medium" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>v0.13.0 | 本地进度自动保存</p>
+        <p className="mt-6 text-white/60 text-sm font-medium" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>v0.14.0 | 本地进度自动保存</p>
       </div>
     </div>
   );
@@ -868,7 +868,7 @@ function BattleScreen({ state, dispatch }: { state: GameState; dispatch: React.D
           <span className="text-xs font-bold text-white bg-black/30 px-2 py-0.5 rounded">Lv.{state.player.level}</span>
           <div className="w-32"><div className="hp-bar-container"><div className="hp-bar-fill bg-green-500" style={{ width: `${(battle.playerHp / state.player.maxHp) * 100}%` }} /></div></div>
           <div className={`relative ${battle.battleStatus === 'player_attack' ? 'animate-hero-attack' : ''}`}>
-            <img src="hero.png" alt="Hero" className="w-24 h-auto object-contain" style={{ animation: battle.battleStatus === 'typing' ? 'breathe 1.5s ease-in-out infinite' : 'none' }} />
+            <img src="hero_avatar.svg" alt="Hero" className="w-24 h-auto object-contain" style={{ animation: battle.battleStatus === 'typing' ? 'breathe 1.5s ease-in-out infinite' : 'none' }} />
             {battle.battleStatus === 'player_attack' && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-green-600 font-black animate-damage-float">-{battle.lastDamage}</div>}
             {battle.battleStatus === 'monster_attack' && <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-600 font-black animate-damage-float">-{battle.lastDamage}</div>}
           </div>
@@ -1065,8 +1065,8 @@ function StatusScreen({ state, dispatch }: { state: GameState; dispatch: React.D
         <div className="bg-white rounded-3xl p-5 shadow-2xl mb-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100 to-transparent rounded-bl-full opacity-50" />
           <div className="flex items-center gap-4 mb-4 relative">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 flex items-center justify-center text-4xl shadow-lg">
-              🧙
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 flex items-center justify-center shadow-lg overflow-hidden">
+              <img src="hero_avatar.svg" alt="Hero" className="w-20 h-20 object-contain" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-black text-gray-800 text-base truncate">{state.playerName || '冒险者'}</p>
