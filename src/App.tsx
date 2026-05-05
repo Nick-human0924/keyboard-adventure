@@ -244,7 +244,7 @@ function settleFreeModeRewards(state: GameState, freeMode: NonNullable<GameState
   const levelInfo = getPlayerLevel(newXp);
   const didLevelUp = levelInfo.level > state.player.level;
 
-  const nextState = {
+  const nextState: GameState = {
     ...state,
     screen: 'FREE_RESULT',
     player: {
