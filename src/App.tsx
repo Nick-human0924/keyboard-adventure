@@ -50,6 +50,7 @@ interface GameState {
   battlesWon: number;
   playerName: string;
   isLoggedIn: boolean;
+  currentSaveSlot: number;
   completedLevels: string[];
   freeMode: {
     difficulty: string;
@@ -114,7 +115,7 @@ type Action =
   | { type: 'OPEN_MONSTER_BOOK' } | { type: 'CLOSE_MONSTER_BOOK' }
   | { type: 'OPEN_FREE_LEADERBOARD' } | { type: 'CLOSE_FREE_LEADERBOARD' }
   | { type: 'SAVE_FREE_RECORD' }
-  | { type: 'LOGIN'; payload: string }
+  | { type: 'LOGIN'; payload: { name: string; slot: number } }
   | { type: 'LOGOUT' }
   | { type: 'LOAD_SAVE'; payload: number }
   | { type: 'DELETE_SAVE'; payload: number }
@@ -156,6 +157,7 @@ function saveToSlot(slotIndex: number, state: GameState) {
     defeatedMonsters: state.defeatedMonsters,
     currentStage: state.currentStage,
     completedLevels: state.completedLevels,
+    currentSaveSlot: state.currentSaveSlot,
     freeLeaderboard: state.freeLeaderboard,
     saveDate: new Date().toLocaleDateString('zh-CN'),
     saveTime: Date.now(),
@@ -178,7 +180,7 @@ function initState(): GameState {
     currentStage: 0, currentWorldId: 'world1', currentLevelId: null, weakKeys: {},
     levelProgress: lp, shopInventory: shopItems.map(i => ({ ...i })),
     missions: dailyMissions.map(m => ({ ...m })), battlesWon: 0,
-    playerName: '', isLoggedIn: false, completedLevels: [],
+    playerName: '', isLoggedIn: false, currentSaveSlot: 0, completedLevels: [],
     freeMode: null,
     freeLeaderboard: JSON.parse(localStorage.getItem('typingLeaderboard') || '[]'),
   };
@@ -196,7 +198,7 @@ function loadFromSlot(slotIndex: number): GameState {
     currentStage: 0, currentWorldId: 'world1', currentLevelId: null, weakKeys: {},
     levelProgress: lp, shopInventory: shopItems.map(i => ({ ...i })),
     missions: dailyMissions.map(m => ({ ...m })), battlesWon: 0,
-    playerName: '', isLoggedIn: false, completedLevels: [],
+    playerName: '', isLoggedIn: false, currentSaveSlot: slotIndex, completedLevels: [],
     freeMode: null,
     freeLeaderboard: JSON.parse(localStorage.getItem('typingLeaderboard') || '[]'),
   };
@@ -224,6 +226,7 @@ function loadFromSlot(slotIndex: number): GameState {
     battlesWon: saved.battlesWon || 0,
     playerName: saved.playerName || '冒险者',
     isLoggedIn: true,
+    currentSaveSlot: saved.currentSaveSlot ?? slotIndex,
     completedLevels: saved.completedLevels || [],
     freeMode: null,
     freeLeaderboard: saved.freeLeaderboard || JSON.parse(localStorage.getItem('typingLeaderboard') || '[]'),
@@ -241,7 +244,7 @@ function settleFreeModeRewards(state: GameState, freeMode: NonNullable<GameState
   const levelInfo = getPlayerLevel(newXp);
   const didLevelUp = levelInfo.level > state.player.level;
 
-  return {
+  const nextState = {
     ...state,
     screen: 'FREE_RESULT',
     player: {
@@ -254,6 +257,8 @@ function settleFreeModeRewards(state: GameState, freeMode: NonNullable<GameState
     },
     freeMode: { ...freeMode, timeLeft, isRunning: false, rewardClaimed: true },
   };
+  if (nextState.isLoggedIn) saveToSlot(nextState.currentSaveSlot, nextState);
+  return nextState;
 }
 
 // ============ Reducer ============
@@ -261,8 +266,8 @@ function reducer(s: GameState, a: Action): GameState {
   const setScreen = (sc: GameScreen) => ({ ...s, prevScreen: s.screen, screen: sc });
   switch (a.type) {
     case 'LOGIN': {
-      const name = a.payload.trim() || '小冒险者';
-      return { ...s, playerName: name, isLoggedIn: true, screen: s.showTutorial ? 'TUTORIAL' : 'WORLD_SELECT', prevScreen: s.screen };
+      const name = a.payload.name.trim() || '小冒险者';
+      return { ...s, playerName: name, currentSaveSlot: a.payload.slot, isLoggedIn: true, screen: s.showTutorial ? 'TUTORIAL' : 'WORLD_SELECT', prevScreen: s.screen };
     }
     case 'LOGOUT': {
       for (let i = 0; i < 3; i++) localStorage.removeItem(`typingSave_${i}`);
@@ -278,7 +283,7 @@ function reducer(s: GameState, a: Action): GameState {
       return { ...s };
     }
     case 'SELECT_SLOT': {
-      return { ...s };
+      return { ...s, currentSaveSlot: a.payload };
     }
     case 'START_GAME': resumeAudio(); return { ...s, screen: s.showTutorial ? 'TUTORIAL' : 'WORLD_SELECT', player: initPlayer(), startTime: Date.now() };
     case 'CLOSE_TUTORIAL': return { ...s, screen: 'WORLD_SELECT', showTutorial: false };
@@ -590,7 +595,7 @@ function SaveSlotScreen({ dispatch }: { dispatch: React.Dispatch<Action> }) {
 
   const handleStart = () => {
     if (!name.trim() || selectedSlot === null) return;
-    dispatch({ type: 'LOGIN', payload: name.trim() });
+    dispatch({ type: 'LOGIN', payload: { name: name.trim(), slot: selectedSlot } });
   };
 
   const handleLoad = (slot: number) => {
@@ -1505,11 +1510,11 @@ export default function App() {
   useEffect(() => {
     if (state.screen === 'BATTLE_TRANSITION') { const t = setTimeout(() => dispatch({ type: 'END_TRANSITION' }), 800); return () => clearTimeout(t); }
   }, [state.screen]);
-  // Auto-save game progress to slot 0 (current active slot)
+  // Auto-save game progress to the active save slot.
   useEffect(() => {
     if (!state.isLoggedIn || state.screen === 'LOGIN' || state.screen === 'TITLE' || state.screen === 'TUTORIAL') return;
-    saveToSlot(0, state);
-  }, [state.player, state.currentWorldId, state.wordsLearned, state.wordsSeen, state.totalBattles, state.battlesWon, state.defeatedMonsters, state.completedLevels, state.levelProgress, state.shopInventory, state.missions, state.isLoggedIn]);
+    saveToSlot(state.currentSaveSlot, state);
+  }, [state.player, state.currentSaveSlot, state.currentWorldId, state.wordsLearned, state.wordsSeen, state.totalBattles, state.battlesWon, state.defeatedMonsters, state.completedLevels, state.levelProgress, state.shopInventory, state.missions, state.freeLeaderboard, state.isLoggedIn]);
   const hStart = useCallback(() => dispatch({ type: 'START_GAME' }), []);
   const hCloseTut = useCallback(() => dispatch({ type: 'CLOSE_TUTORIAL' }), []);
 
