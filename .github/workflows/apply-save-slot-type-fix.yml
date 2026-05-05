@@ -1,0 +1,74 @@
+name: Apply save slot type fix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-save-slot-type-fix.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '*/5 * * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: save-slot-type-fix
+  cancel-in-progress: false
+
+jobs:
+  apply-build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Patch GameState inference
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/App.tsx')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace('  const nextState = {\n    ...state,\n    screen: \'FREE_RESULT\',', '  const nextState: GameState = {\n    ...state,\n    screen: \'FREE_RESULT\',', 1)
+          if 'const nextState: GameState = {' not in text:
+              raise SystemExit('GameState annotation was not applied')
+          path.write_text(text, encoding='utf-8', newline='\n')
+          PY
+
+      - name: Commit type fix
+        run: |
+          if [ -n "$(git status --porcelain src/App.tsx)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/App.tsx
+            git commit -m "fix: type free challenge reward state"
+            git push
+          else
+            echo "No App.tsx changes needed."
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+
+      - name: Remove temporary workflow
+        run: |
+          git rm .github/workflows/apply-save-slot-type-fix.yml
+          git commit -m "chore: remove temporary save slot type fix workflow"
+          git push
