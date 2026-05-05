@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="142" rx="45" ry="8" fill="#000" opacity=".18"/><path d="M48 26l66 66-34 34-66-66z" fill="#facc15" stroke="#854d0e" stroke-width="5"/><path d="M100 78l14 14-18 18-14-14z" fill="#f97316"/><path d="M36 14l12 12-34 34-12-12z" fill="#fef3c7" stroke="#854d0e" stroke-width="5"/><path d="M2 48l12 12-14 6z" fill="#1f2937"/><circle cx="65" cy="74" r="7" fill="#111827"/><circle cx="85" cy="94" r="7" fill="#111827"/><path d="M58 98c8 8 18 8 26 0" stroke="#7c2d12" stroke-width="5" fill="none" stroke-linecap="round"/><text x="112" y="42" font-family="Arial" font-size="26" font-weight="900" fill="#2563eb">Q</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Pencil imp">
+  <ellipse cx="80" cy="142" rx="45" ry="8" fill="#000" opacity=".18"/>
+  <path d="M48 26l66 66-34 34-66-66z" fill="#facc15" stroke="#854d0e" stroke-width="5"/>
+  <path d="M100 78l14 14-18 18-14-14z" fill="#f97316"/>
+  <path d="M36 14l12 12-34 34-12-12z" fill="#fef3c7" stroke="#854d0e" stroke-width="5"/>
+  <path d="M2 48l12 12-14 6z" fill="#1f2937"/>
+  <circle cx="65" cy="74" r="7" fill="#111827"/>
+  <circle cx="85" cy="94" r="7" fill="#111827"/>
+  <path d="M58 98c8 8 18 8 26 0" stroke="#7c2d12" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <text x="112" y="42" font-family="Arial" font-size="26" font-weight="900" fill="#2563eb">Q</text>
+</svg>

@@ -1,1 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="143" rx="46" ry="8" fill="#000" opacity=".18"/><rect x="38" y="47" width="84" height="66" rx="24" fill="#8b5cf6" stroke="#312e81" stroke-width="5"/><circle cx="80" cy="78" r="23" fill="#dbeafe" stroke="#1d4ed8" stroke-width="5"/><circle cx="80" cy="78" r="10" fill="#0f172a"/><path d="M34 62L14 48M126 62l20-14M44 112l-12 20M116 112l12 20" stroke="#312e81" stroke-width="9" stroke-linecap="round"/><rect x="52" y="103" width="18" height="15" rx="4" fill="#22c55e"/><rect x="75" y="103" width="18" height="15" rx="4" fill="#facc15"/><rect x="98" y="103" width="18" height="15" rx="4" fill="#ef4444"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Key drone">
+  <ellipse cx="80" cy="143" rx="46" ry="8" fill="#000" opacity=".18"/>
+  <rect x="38" y="47" width="84" height="66" rx="24" fill="#8b5cf6" stroke="#312e81" stroke-width="5"/>
+  <circle cx="80" cy="78" r="23" fill="#dbeafe" stroke="#1d4ed8" stroke-width="5"/>
+  <circle cx="80" cy="78" r="10" fill="#0f172a"/>
+  <path d="M34 62L14 48M126 62l20-14M44 112l-12 20M116 112l12 20" stroke="#312e81" stroke-width="9" stroke-linecap="round"/>
+  <rect x="52" y="103" width="18" height="15" rx="4" fill="#22c55e"/>
+  <rect x="75" y="103" width="18" height="15" rx="4" fill="#facc15"/>
+  <rect x="98" y="103" width="18" height="15" rx="4" fill="#ef4444"/>
+</svg>

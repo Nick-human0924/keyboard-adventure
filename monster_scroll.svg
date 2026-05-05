@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="142" rx="48" ry="8" fill="#000" opacity=".18"/><path d="M34 38c10-18 36-18 46 0 10-18 36-18 46 0v72c-10-14-36-14-46 0-10-14-36-14-46 0z" fill="#fef3c7" stroke="#92400e" stroke-width="5"/><path d="M50 55h60M50 73h58M50 91h48" stroke="#b45309" stroke-width="5" stroke-linecap="round"/><circle cx="61" cy="118" r="9" fill="#111827"/><circle cx="99" cy="118" r="9" fill="#111827"/><path d="M68 132c8 6 16 6 24 0" stroke="#92400e" stroke-width="5" fill="none" stroke-linecap="round"/><text x="80" y="30" text-anchor="middle" font-family="Arial" font-size="20" font-weight="900" fill="#2563eb">ABC</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Scroll sprite">
+  <ellipse cx="80" cy="142" rx="48" ry="8" fill="#000" opacity=".18"/>
+  <path d="M34 38c10-18 36-18 46 0 10-18 36-18 46 0v72c-10-14-36-14-46 0-10-14-36-14-46 0z" fill="#fef3c7" stroke="#92400e" stroke-width="5"/>
+  <path d="M50 55h60M50 73h58M50 91h48" stroke="#b45309" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="61" cy="118" r="9" fill="#111827"/>
+  <circle cx="99" cy="118" r="9" fill="#111827"/>
+  <path d="M68 132c8 6 16 6 24 0" stroke="#92400e" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <text x="80" y="30" text-anchor="middle" font-family="Arial" font-size="20" font-weight="900" fill="#2563eb">ABC</text>
+</svg>
