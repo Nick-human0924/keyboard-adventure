@@ -1084,4 +1084,3 @@ export function getFreeTimeLimit(content: ContentItem): number {
   const lengthBonus = Math.max(0, content.text.length - 3) * 1.2;
   return base + lengthBonus;
 }
-
