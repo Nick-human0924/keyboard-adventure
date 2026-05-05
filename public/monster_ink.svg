@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><ellipse cx="80" cy="143" rx="48" ry="8" fill="#000" opacity=".18"/><path d="M80 20c32 0 48 20 48 52 0 45-22 64-48 64S32 117 32 72c0-32 16-52 48-52z" fill="#312e81" stroke="#111827" stroke-width="5"/><path d="M42 95c-18 5-22 22-11 34M118 95c18 5 22 22 11 34" fill="none" stroke="#312e81" stroke-width="13" stroke-linecap="round"/><circle cx="64" cy="68" r="10" fill="#fff"/><circle cx="96" cy="68" r="10" fill="#fff"/><circle cx="67" cy="70" r="5" fill="#111827"/><circle cx="93" cy="70" r="5" fill="#111827"/><path d="M65 94c10 8 20 8 30 0" stroke="#f9a8d4" stroke-width="6" fill="none" stroke-linecap="round"/><text x="80" y="122" text-anchor="middle" font-family="Arial" font-size="28" font-weight="900" fill="#a5b4fc">INK</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Ink sprite">
+  <ellipse cx="80" cy="143" rx="48" ry="8" fill="#000" opacity=".18"/>
+  <path d="M80 20c32 0 48 20 48 52 0 45-22 64-48 64S32 117 32 72c0-32 16-52 48-52z" fill="#312e81" stroke="#111827" stroke-width="5"/>
+  <path d="M42 95c-18 5-22 22-11 34M118 95c18 5 22 22 11 34" fill="none" stroke="#312e81" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="64" cy="68" r="10" fill="#fff"/>
+  <circle cx="96" cy="68" r="10" fill="#fff"/>
+  <circle cx="67" cy="70" r="5" fill="#111827"/>
+  <circle cx="93" cy="70" r="5" fill="#111827"/>
+  <path d="M65 94c10 8 20 8 30 0" stroke="#f9a8d4" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <text x="80" y="122" text-anchor="middle" font-family="Arial" font-size="28" font-weight="900" fill="#a5b4fc">INK</text>
+</svg>
