@@ -1,0 +1,223 @@
+name: Apply gameplay fixes and deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-game-fixes.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  apply-build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Apply gameplay fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          app_path = Path('src/App.tsx')
+          text = app_path.read_text(encoding='utf-8')
+
+          if '    rewardClaimed: boolean;' not in text:
+              text = text.replace(
+                  '    isRunning: boolean;\n    rewards:',
+                  '    isRunning: boolean;\n    rewardClaimed: boolean;\n    recordSaved: boolean;\n    rewards:'
+              )
+
+          helper = '''function settleFreeModeRewards(state: GameState, freeMode: NonNullable<GameState['freeMode']>, timeLeft: number): GameState {
+  if (freeMode.rewardClaimed) {
+    return { ...state, screen: 'FREE_RESULT', freeMode: { ...freeMode, timeLeft, isRunning: false } };
+  }
+
+  const coins = freeMode.correctCount * freeMode.rewards.coins;
+  const xp = freeMode.correctCount * freeMode.rewards.xp;
+  const newXp = state.player.xp + xp;
+  const levelInfo = getPlayerLevel(newXp);
+  const didLevelUp = levelInfo.level > state.player.level;
+
+  return {
+    ...state,
+    screen: 'FREE_RESULT',
+    player: {
+      ...state.player,
+      coins: state.player.coins + coins,
+      xp: newXp,
+      level: levelInfo.level,
+      maxHp: levelInfo.maxHp,
+      hp: didLevelUp ? levelInfo.maxHp : Math.min(levelInfo.maxHp, state.player.hp + Math.min(10, freeMode.correctCount)),
+    },
+    freeMode: { ...freeMode, timeLeft, isRunning: false, rewardClaimed: true },
+  };
+}
+'''
+          if 'function settleFreeModeRewards(' not in text:
+              text = text.replace('\n// ============ Reducer ============\n', '\n' + helper + '\n// ============ Reducer ============\n')
+
+          if 'rewardClaimed: false' not in text:
+              text = text.replace(
+                  'isRunning: true, rewards: { coins: getFreeContentReward(difficulty, true), xp: getFreeContentReward(difficulty, true) }',
+                  'isRunning: true, rewardClaimed: false, recordSaved: false, rewards: { coins: getFreeContentReward(difficulty, true), xp: getFreeContentReward(difficulty, true) }'
+              )
+
+          text = text.replace(
+              "if (nt <= 0) return { ...s, screen: 'FREE_RESULT', freeMode: { ...s.freeMode, timeLeft: 0, isRunning: false } };",
+              "if (nt <= 0) return settleFreeModeRewards(s, s.freeMode, 0);"
+          )
+          text = text.replace(
+              "case 'END_FREE_PLAY': return { ...s, screen: 'FREE_RESULT', freeMode: s.freeMode ? { ...s.freeMode, isRunning: false } : null };",
+              "case 'END_FREE_PLAY': return s.freeMode ? settleFreeModeRewards(s, s.freeMode, s.freeMode.timeLeft) : s;"
+          )
+
+          save_start = text.find("    case 'SAVE_FREE_RECORD': {")
+          if save_start != -1:
+              save_end = text.find("    case 'BUY_ITEM': {", save_start)
+              save_block = text[save_start:save_end]
+              if 'recordSaved' not in save_block:
+                  new_save = """    case 'SAVE_FREE_RECORD': {
+      if (!s.freeMode) return s;
+      const fm = s.freeMode;
+      if (fm.recordSaved) return s;
+      const score = fm.correctCount * fm.rewards.coins + fm.maxCombo * 2;
+      const newRecord = {
+        id: Date.now().toString(),
+        difficulty: fm.difficulty,
+        timeLimit: fm.timeLimit,
+        correctCount: fm.correctCount,
+        totalChars: fm.totalChars,
+        maxCombo: fm.maxCombo,
+        score,
+        date: new Date().toLocaleDateString('zh-CN'),
+      };
+      const updated = [...s.freeLeaderboard, newRecord].sort((a, b) => b.score - a.score).slice(0, 50);
+      localStorage.setItem('typingLeaderboard', JSON.stringify(updated));
+      return { ...s, freeMode: { ...fm, recordSaved: true }, freeLeaderboard: updated };
+    }
+"""
+                  text = text[:save_start] + new_save + text[save_end:]
+
+          text = text.replace(
+              "if (b.battleStatus === 'shield_phase') {\n        const nt = b.timeLeft - 0.1;\n        if (nt <= 0) {\n          const md = calculateMonsterDamage(b.monster.attackDamage, s.player.defenseBoost);\n          const nph = Math.max(0, b.playerHp - md);\n          return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, battleStatus: 'monster_attack', lastDamage: md, shakeScreen: true, defensePrompt: '' } };\n        }",
+              "if (b.battleStatus === 'shield_phase') {\n        const nt = b.timeLeft - 0.1;\n        if (nt <= 0) {\n          const md = calculateMonsterDamage(b.monster.attackDamage, s.player.defenseBoost);\n          const nph = Math.max(0, b.playerHp - md);\n          return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, combo: 0, totalErrors: b.totalErrors + b.roundErrors, roundResults: [...b.roundResults, { correct: false, timeLeft: 0, timeLimit: b.timeLimit, errors: b.roundErrors, text: b.targetText }], battleStatus: 'monster_attack', lastDamage: md, shakeScreen: true, defensePrompt: '' }, totalInputs: s.totalInputs + b.targetText.length, totalTimeouts: s.totalTimeouts + 1 };\n        }"
+          )
+          if "const canUseShield = b.monster.isBoss && b.currentRound % 4 === 0;" not in text:
+              text = text.replace(
+                  "if (b.currentRound > 2 && b.combo >= 2) {",
+                  "const canUseShield = b.monster.isBoss && b.currentRound % 4 === 0;\n        if (canUseShield) {"
+              )
+          text = text.replace(
+              "return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, battleStatus: 'monster_attack', lastDamage: rd, shakeScreen: true, defensePrompt: '' } };",
+              "return { ...s, battle: { ...b, timeLeft: 0, playerHp: nph, combo: 0, totalErrors: b.totalErrors + b.roundErrors, roundResults: [...b.roundResults, { correct: false, timeLeft: 0, timeLimit: b.timeLimit, errors: b.roundErrors, text: b.targetText }], battleStatus: 'monster_attack', lastDamage: rd, shakeScreen: true, defensePrompt: '' }, totalInputs: s.totalInputs + b.targetText.length, totalTimeouts: s.totalTimeouts + 1 };"
+          )
+          text = text.replace(
+              "if (b.battleStatus === 'monster_attack' || b.battleStatus === 'shield_phase') {",
+              "if (b.battleStatus === 'monster_attack') {"
+          )
+          text = text.replace(
+              "battle.battleStatus === 'player_attack' || battle.battleStatus === 'monster_attack' || battle.battleStatus === 'shield_phase'",
+              "battle.battleStatus === 'player_attack' || battle.battleStatus === 'monster_attack'"
+          )
+          text = text.replace(
+              "useEffect(() => { if (battle.battleStatus === 'typing') { const iv = setInterval(() => dispatch({ type: 'TICK_TIMER' }), 100); return () => clearInterval(iv); } }, [battle.battleStatus, dispatch]);",
+              "useEffect(() => { if (battle.battleStatus === 'typing' || battle.battleStatus === 'shield_phase') { const iv = setInterval(() => dispatch({ type: 'TICK_TIMER' }), 100); return () => clearInterval(iv); } }, [battle.battleStatus, dispatch]);"
+          )
+
+          if 'const totalXp = fm.correctCount * fm.rewards.xp;' not in text:
+              text = text.replace(
+                  "const totalReward = fm.correctCount * fm.rewards.coins;\n  const diffLabel",
+                  "const totalReward = fm.correctCount * fm.rewards.coins;\n  const totalXp = fm.correctCount * fm.rewards.xp;\n  const diffLabel"
+              )
+          text = text.replace(
+              '''        <div className="flex justify-center gap-4 mb-6">
+          <div className="flex items-center gap-2 bg-yellow-50 rounded-xl px-5 py-3 border border-yellow-200"><span className="text-2xl">🪙</span><span className="font-black text-yellow-700 text-lg">+{totalReward}</span></div>
+        </div>
+        <div className="flex gap-2 mb-2">
+          <button onClick={() => dispatch({ type: 'SAVE_FREE_RECORD' })} className="flex-1 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-400 transition-all cursor-pointer text-sm">💾 保存记录</button>''',
+              '''        <div className="flex justify-center gap-3 mb-2">
+          <div className="flex items-center gap-2 bg-yellow-50 rounded-xl px-5 py-3 border border-yellow-200"><span className="text-2xl">🪙</span><span className="font-black text-yellow-700 text-lg">+{totalReward}</span></div>
+          <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-5 py-3 border border-blue-200"><span className="text-2xl">✨</span><span className="font-black text-blue-700 text-lg">+{totalXp}</span></div>
+        </div>
+        <p className="text-center text-xs text-gray-400 mb-5">{fm.rewardClaimed ? '奖励已到账' : '奖励结算中'}</p>
+        <div className="flex gap-2 mb-2">
+          <button onClick={() => dispatch({ type: 'SAVE_FREE_RECORD' })} disabled={fm.recordSaved} className={`flex-1 py-2 text-white font-bold rounded-lg transition-all text-sm ${fm.recordSaved ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-400 cursor-pointer'}`}>{fm.recordSaved ? '已保存' : '💾 保存记录'}</button>'''
+          )
+
+          required = [
+              'rewardClaimed: boolean;',
+              'recordSaved: boolean;',
+              'function settleFreeModeRewards(',
+              'settleFreeModeRewards(s, s.freeMode, 0)',
+              'settleFreeModeRewards(s, s.freeMode, s.freeMode.timeLeft)',
+              'const canUseShield = b.monster.isBoss && b.currentRound % 4 === 0;',
+              "battle.battleStatus === 'typing' || battle.battleStatus === 'shield_phase'",
+              'const totalXp = fm.correctCount * fm.rewards.xp;',
+              'disabled={fm.recordSaved}',
+          ]
+          missing = [item for item in required if item not in text]
+          if missing:
+              raise SystemExit('Missing expected App.tsx fixes: ' + ', '.join(missing))
+          if 'coins: s.player.coins + score' in text:
+              raise SystemExit('Old free challenge save coin award is still present')
+          app_path.write_text(text, encoding='utf-8', newline='\n')
+
+          lock_path = Path('package-lock.json')
+          if lock_path.exists():
+              lock = json.loads(lock_path.read_text(encoding='utf-8'))
+              lock['version'] = '0.13.0'
+              lock.setdefault('packages', {}).setdefault('', {})['version'] = '0.13.0'
+              lock_path.write_text(json.dumps(lock, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Commit applied fixes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/App.tsx package-lock.json
+            git commit -m "fix: improve gameplay rewards and shield flow"
+            git push
+          else
+            echo "No gameplay fixes to commit."
+          fi
