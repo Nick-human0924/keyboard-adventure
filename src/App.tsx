@@ -1316,10 +1316,10 @@ function FreeModeScreen({ state: _state, dispatch }: { state: GameState; dispatc
   const [selectedDiff, setSelectedDiff] = useState('word');
   const [selectedTime, setSelectedTime] = useState(60);
   const difficulties = [
-    { id: 'letter', name: '字母模式', desc: '单个字母 A-Z', reward: '1金币/词', icon: '🔤', color: 'from-green-400 to-green-600' },
-    { id: 'combo', name: '组合模式', desc: '双字母组合 as, th', reward: '2金币/词', icon: '🔗', color: 'from-blue-400 to-blue-600' },
-    { id: 'word', name: '单词模式', desc: '2-4字母单词', reward: '3金币/词', icon: '📖', color: 'from-orange-400 to-orange-600' },
-    { id: 'phrase', name: '句子模式', desc: '完整短句', reward: '5金币/词', icon: '✍️', color: 'from-red-400 to-red-600' },
+    { id: 'letter', name: '字母模式', desc: '单个字母 A-Z', reward: '2金币/词', icon: '🔤', color: 'from-green-400 to-green-600' },
+    { id: 'combo', name: '组合模式', desc: '双字母组合 as, th', reward: '3金币/词', icon: '🔗', color: 'from-blue-400 to-blue-600' },
+    { id: 'word', name: '单词模式', desc: '2-4字母单词', reward: '5金币/词', icon: '📖', color: 'from-orange-400 to-orange-600' },
+    { id: 'phrase', name: '句子模式', desc: '完整短句', reward: '8金币/词', icon: '✍️', color: 'from-red-400 to-red-600' },
   ];
   const times = [30, 60, 90, 120];
   return (
